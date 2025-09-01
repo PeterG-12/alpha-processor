@@ -1,0 +1,84 @@
+# Xilinx Vivado Project Files
+# These are generated and can be recreated from the source files.
+
+# Project-related temporary files and folders
+.cache/
+.gen/
+.Xil/
+.ipcache/
+.sim_cache/
+*.backup/
+*.log
+*.jou
+*.wdb
+*.wcfg
+xsim.dir/
+
+# Synthesis and Implementation runs
+*.runs/
+
+# User IP repository and IP cache
+# These are often large and can be recreated
+ip_user_files/
+.ip_cache/
+
+# Simulation-related files
+*.sim/
+webtalk/
+
+# Generated bitstreams, hardware handoff, etc.
+*.bit
+*.bin
+*.elf
+*.hwdef
+*.sysdef
+*.hwh
+*.mcs
+*.bin
+*.xsa
+*.ltx
+*.prm
+*.pcf
+*.xdc
+*.xdl
+*.rcf
+*.rpt
+
+# Other automatically generated files
+*.out
+*.rpt
+*.str
+*.tcl
+*.xml
+*.tpd
+*.tdf
+*.xise
+*.xts
+*.bmm
+*.mmi
+*.xmp
+*.ngc
+*.ngd
+*.ncd
+*.pco
+*.lso
+*.syn
+*.ut
+*.vdi
+*.vcs
+*.wdb
+_xmsgs/
+
+# VHDL and other source files to always keep tracked
+# Exclusions to ensure your source code is not ignored
+!*.vhd
+!*.vhdl
+!*.v
+!*.sv
+!*.h
+!*.xdc
+!*.tcl
+
+# Standard OS files
+.DS_Store
+Thumbs.db
