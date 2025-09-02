@@ -2,19 +2,19 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
 
-entity reg32bit is
-    generic(N : integer);
+entity custom_register is
+    generic(BIT_WIDTH : integer);
     
-    port(input : in std_logic_vector(N - 1 downto 0);
+    port(input : in std_logic_vector(BIT_WIDTH - 1 downto 0);
         write_enable, clk, reset : in std_logic;
-        output : out std_logic_vector(N - 1 downto 0)
+        output : out std_logic_vector(BIT_WIDTH - 1 downto 0)
     );
         
-end reg32bit;
+end custom_register;
 
-architecture Behavioral of reg32bit is
+architecture Behavioral of custom_register is
 
-signal internal_memory : std_logic_vector(N downto 0);
+signal internal_memory : std_logic_vector(BIT_WIDTH downto 0);
 
 begin
     
