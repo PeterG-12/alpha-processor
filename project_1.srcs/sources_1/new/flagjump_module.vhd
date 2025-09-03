@@ -5,8 +5,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity flagjump_module is
     -- Defines the maximum number of jump types
-    generic(JUMPSELECT_WIDTH : integer := 3);
-    port(jump_select : in std_logic_vector(JUMPSELECT_WIDTH - 1 downto 0);
+    generic(JUMPTYPES_WIDTH : integer);
+    port(jump_type_bits : in std_logic_vector(JUMPTYPES_WIDTH - 1 downto 0);
         -- flags
         sign_f, overflow_f, zero_f : in std_logic;
         output_jump : out std_logic
@@ -35,8 +35,8 @@ begin
 
     process
     begin
-        -- if JUMPSELECT_WIDTH is not 3 this part needs to be manually edited to fit new number of jump types
-        case jump_select is
+        -- if JUMPTYPES_WIDTH is not 3 this part needs to be manually edited to fit new number of jump types
+        case jump_type_bits is
             when "001" => output_jump <= zero_f;
             when "010" => output_jump <= zero_negated;
             when "011" => output_jump <= sign_xor_overflow;
