@@ -12,7 +12,7 @@ entity jumpconsider_module is
     );
     port(
         opcode : in std_logic_vector(OPCODE_WIDTH - 1 downto 0);
-        is_jump : std_logic
+        is_jump : out std_logic
     );
 end jumpconsider_module;
 

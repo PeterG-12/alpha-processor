@@ -6,8 +6,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 -- A single one can be written and two can be read at the same time
 
 entity register_holder is
-    generic(BIT_WIDTH : integer;
-            ADDRESS_SIZE : integer);
+    generic(BIT_WIDTH : integer := 16;
+            ADDRESS_SIZE : integer := 5);
     port(adress_x, address_y, dest_address : in std_logic_vector(ADDRESS_SIZE - 1 downto 0);
         write_enable, clk, reset  : in std_logic;
         input_w : in std_logic_vector(BIT_WIDTH - 1 downto 0);

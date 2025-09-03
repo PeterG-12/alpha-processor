@@ -14,7 +14,6 @@ entity FSM is
         sign_f, overflow_f, zero_f : in std_logic;
     -- Full list of control, select and write-enable signals controlling
     -- the entire CPU flow logic
-        ireset  : out std_logic;
         pcwe    : out std_logic;
         adrsel  : out std_logic_vector(1 downto 0);
         segsel  : out std_logic;
@@ -78,10 +77,22 @@ architecture Structural of FSM is
         );
     end component;
 
+    component multiplexer is
+        generic(SEL_NUMBER : integer;
+                BIT_WIDTH : integer);
+        port(sel : in std_logic_vector(SEL_NUMBER - 1 downto 0);
+            input : in std_logic_vector((2**SEL_NUMBER * BIT_WIDTH) - 1 downto 0);
+            output : out std_logic_vector(BIT_WIDTH - 1 downto 0)
+            );
+    end component;
+
     signal end_of_cycle_signal : std_logic;
     signal ROM_address : std_logic_vector(ADDRESS_SIZE - 1 downto 0);
-    signal operation_is_jump_type : std_logic;
+    signal consider_jump : std_logic;
+    signal jump_type_result : std_logic;
+    signal jump_address_select : std_logic;
     signal ROM_data : std_logic_vector(DATA_WIDTH - 1 downto 0);
+
 
 begin
 
@@ -91,7 +102,7 @@ begin
         clk => clk, 
         reset => reset, 
         end_of_cycle => end_of_cycle_signal,
-        output_count => ROM_address(COUNT_BIT_WIDTH -1 downto 0);
+        output_count => ROM_address(COUNT_BIT_WIDTH -1 downto 0)
     );
 
     jumpconsider_module_0 : jumpconsider_module
@@ -101,18 +112,18 @@ begin
     )
     port map(
         opcode => opcode,
-        is_jump => operation_is_jump_type
+        is_jump => consider_jump
     );
 
     flagjump_module_0 : flagjump_module
     generic map(JUMPTYPES_WIDTH => 3)
     -- first 3 bits of opcode indicate the type of the jump
-    port map(jump_type_bits => opcode(JUMPTYPES_WIDTH - 1 downto 0);
+    port map(jump_type_bits => opcode(JUMPTYPES_WIDTH - 1 downto 0),
         -- flags
         sign_f => sign_f, 
         overflow_f => overflow_f, 
         zero_f => zero_f,
-        output_jump => operation_is_jump_type
+        output_jump => jump_type_result
     );
 
     rom : FSMROM
@@ -124,7 +135,31 @@ begin
         data_output => ROM_data
     );
 
-    
+
+
+    jump_result_multiplexer : multiplexer
+    generic map(
+        SEL_NUMBER => 1,
+        BIT_WIDTH => 2
+    )
+    port map(
+        sel => consider_jump,
+        input => "1100",
+        output => jump_address_select
+    );
+
+
+    jump_consider_multiplexer : multiplexer
+    generic map(
+        SEL_NUMBER => 1,
+        BIT_WIDTH => 2
+    )
+    port map(
+        sel => jump_address_select,
+        input => jump_type_result & ROM_data(DATA_WIDTH - 26 downto DATA_WIDTH - 27),
+        output => pcsel
+    );
+
     end_of_cycle_signal  <= ROM_data(DATA_WIDTH - 1); --ireset
     pcwe    <= ROM_data(DATA_WIDTH - 2);
     adrsel  <= ROM_data(DATA_WIDTH - 3 downto DATA_WIDTH - 4);
@@ -142,10 +177,12 @@ begin
     ysel    <= ROM_data(DATA_WIDTH - 19 downto DATA_WIDTH - 20);
     alum    <= ROM_data(DATA_WIDTH - 21 downto DATA_WIDTH - 24);
     aluwe   <= ROM_data(DATA_WIDTH - 25);
-    pcsel   <= ROM_data(DATA_WIDTH - 26 downto DATA_WIDTH - 27);
+    
     cswe    <= ROM_data(DATA_WIDTH - 28);
     dswe    <= ROM_data(DATA_WIDTH - 29);
     dsel    <= ROM_data(DATA_WIDTH - 30);
 
+
+    ROM_address <= opcode & output_count;
 
 end Structural;
