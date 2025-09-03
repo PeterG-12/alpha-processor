@@ -9,7 +9,7 @@ entity flagjump_module is
     port(jump_select : in std_logic_vector(JUMPSELECT_WIDTH - 1 downto 0);
         -- flags
         sign_f, overflow_f, zero_f : in std_logic;
-        output_jump : out std_logic;
+        output_jump : out std_logic
     );
 end flagjump_module;
 
@@ -43,7 +43,7 @@ begin
             when "100" => output_jump <= zero_negated_and_xnor;
             when "101" => output_jump <= sign_xnor_overflow;
             when "110" => output_jump <= zero_or_xor;
-            when others => '0';
+            when others => output_jump <= '0';
         end case;
     end process;
 
