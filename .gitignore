@@ -82,3 +82,6 @@ _xmsgs/
 # Standard OS files
 .DS_Store
 Thumbs.db
+
+# Simulation sources
+project_1.sim/*

@@ -8,26 +8,23 @@ entity demultiplexer is
     port(sel : in std_logic_vector(SEL_NUMBER - 1 downto 0);
         input : in std_logic_vector(BIT_WIDTH - 1 downto 0);
         output : out std_logic_vector((2**SEL_NUMBER * BIT_WIDTH) - 1 downto 0)
-        );
-        
-end demultiplexer;
+    );
+end entity demultiplexer;
 
 architecture Behavioral of demultiplexer is
 
-    
 begin
 
     process(sel, input)
-        variable sel_int : integer range 0 to (2**SEL_NUMBER - 1);
-        variable output_variable : std_logic_vector((2**SEL_NUMBER * BIT_WIDTH) - 1 downto 0);
+        variable sel_int_var : integer range 0 to (2**SEL_NUMBER - 1);
+        variable output_var : std_logic_vector((2**SEL_NUMBER * BIT_WIDTH) - 1 downto 0);
     begin
+        output_var := (others => '0');
+        sel_int_var := to_integer(unsigned(sel));
 
-        sel_int := to_integer(unsigned(sel));
-        output_variable := (others => '0');
+        output_var(sel_int_var * BIT_WIDTH + BIT_WIDTH - 1 downto sel_int_var * BIT_WIDTH) := input;
 
-        output_variable(sel_int * BIT_WIDTH - 1 downto (sel_int - 1) * BIT_WIDTH) := input;
-
-        output <= output_variable;
+        output <= output_var;
     end process;
 
-end Behavioral;
+end architecture Behavioral;

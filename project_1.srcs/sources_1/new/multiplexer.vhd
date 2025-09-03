@@ -20,5 +20,5 @@ begin
 
     sel_int <= to_integer(unsigned(sel));
     
-    output <= input((sel_int * BIT_WIDTH) + BIT_WIDTH - 1 downto sel_int * WIDTH);
+    output <= input((sel_int * BIT_WIDTH) + BIT_WIDTH - 1 downto sel_int * BIT_WIDTH);
 end Behavioral;

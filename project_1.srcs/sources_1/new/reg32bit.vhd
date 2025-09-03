@@ -14,7 +14,7 @@ end custom_register;
 
 architecture Behavioral of custom_register is
 
-signal internal_memory : std_logic_vector(BIT_WIDTH downto 0);
+signal internal_memory : std_logic_vector(BIT_WIDTH - 1 downto 0);
 
 begin
     
@@ -25,11 +25,16 @@ begin
         if reset = '1' then
             internal_memory <= (others => '0');
         elsif rising_edge(clk) then
-            internal_memory <= input;
+            if write_enable = '1' then
+                internal_memory <= input;
+            else
+                internal_memory <= internal_memory;
+             end if;
         end if;
         
-        output <= internal_memory;
-        
     end process;
+    
+    
+    output <= internal_memory;
 
 end Behavioral;
