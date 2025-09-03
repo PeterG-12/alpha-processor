@@ -2,6 +2,9 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
 
+-- These are the processor's generel purpose registers
+-- A single one can be written and two can be read at the same time
+
 entity register_holder is
     generic(BIT_WIDTH : integer;
             ADDRESS_SIZE : integer);
