@@ -30,11 +30,11 @@ begin
 
     if reset = '1' then
         internal_count := 0;
-        internal_to_reset <= '0';
+        --internal_to_reset <= '0';
     elsif rising_edge(clk) then
-        internal_to_reset <= end_of_cycle;
+        --internal_to_reset <= end_of_cycle;
         
-        if internal_to_reset = '1' then
+        if end_of_cycle = '1' then
             internal_count := 0;
         else
             internal_count := internal_count + 1;

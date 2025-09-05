@@ -4,8 +4,9 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
 entity FSM is
-    generic(OPCODE_WIDTH : integer;
-        COUNT_BIT_WIDTH : integer;
+    generic(OPCODE_WIDTH : integer := 6;
+        COUNT_BIT_WIDTH : integer := 3;
+        JUMPTYPES_WIDTH : integer := 3;
         DATA_WIDTH : integer := 30;
         ADDRESS_SIZE : integer := 9);
     port(opcode : in std_logic_vector(OPCODE_WIDTH - 1 downto 0);
@@ -28,7 +29,7 @@ entity FSM is
         xywe    : out std_logic;
         xsel    : out std_logic_vector(1 downto 0);
         ysel    : out std_logic_vector(1 downto 0);
-        alum    : out std_logic_vector(2 downto 0);
+        alum    : out std_logic_vector(3 downto 0);
         aluwe   : out std_logic;
         pcsel   : out std_logic_vector(1 downto 0);
         cswe    : out std_logic;
@@ -54,7 +55,7 @@ architecture Structural of FSM is
     );
     port(
         opcode : in std_logic_vector(OPCODE_WIDTH - 1 downto 0);
-        is_jump : std_logic
+        is_jump : out std_logic
     );
     end component;
 
@@ -90,9 +91,9 @@ architecture Structural of FSM is
     signal ROM_address : std_logic_vector(ADDRESS_SIZE - 1 downto 0);
     signal consider_jump : std_logic;
     signal jump_type_result : std_logic;
-    signal jump_address_select : std_logic;
+    signal jump_address_select : std_logic_vector(1 downto 0);
     signal ROM_data : std_logic_vector(DATA_WIDTH - 1 downto 0);
-
+    signal output_count : std_logic_vector(COUNT_BIT_WIDTH -1 downto 0);
 
 begin
 
@@ -102,7 +103,7 @@ begin
         clk => clk, 
         reset => reset, 
         end_of_cycle => end_of_cycle_signal,
-        output_count => ROM_address(COUNT_BIT_WIDTH -1 downto 0)
+        output_count => output_count
     );
 
     jumpconsider_module_0 : jumpconsider_module
@@ -116,7 +117,7 @@ begin
     );
 
     flagjump_module_0 : flagjump_module
-    generic map(JUMPTYPES_WIDTH => 3)
+    generic map(JUMPTYPES_WIDTH => JUMPTYPES_WIDTH)
     -- first 3 bits of opcode indicate the type of the jump
     port map(jump_type_bits => opcode(JUMPTYPES_WIDTH - 1 downto 0),
         -- flags
@@ -126,7 +127,7 @@ begin
         output_jump => jump_type_result
     );
 
-    rom : FSMROM
+    rom : FSM_ROM
     generic map(
         DATA_WIDTH => DATA_WIDTH,
         ADDRESS_SIZE => ADDRESS_SIZE
@@ -143,7 +144,7 @@ begin
         BIT_WIDTH => 2
     )
     port map(
-        sel => consider_jump,
+        sel => (0 => jump_type_result),
         input => "1100",
         output => jump_address_select
     );
@@ -155,8 +156,8 @@ begin
         BIT_WIDTH => 2
     )
     port map(
-        sel => jump_address_select,
-        input => jump_type_result & ROM_data(DATA_WIDTH - 26 downto DATA_WIDTH - 27),
+        sel => (0 => consider_jump),
+        input => jump_address_select & ROM_data(DATA_WIDTH - 26 downto DATA_WIDTH - 27),
         output => pcsel
     );
 

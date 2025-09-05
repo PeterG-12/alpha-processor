@@ -18,8 +18,8 @@ end jumpconsider_module;
 
 architecture Behavioral of jumpconsider_module is
 
-signal upper_bound : std_logic_vector(OPCODE_WIDTH - 1 downto 0) := std_logic_vector(unsigned(UPPER_BOUND, OPCODE_WIDTH));
-signal lower_bound : std_logic_vector(OPCODE_WIDTH - 1 downto 0) := std_logic_vector(unsigned(LOWER_BOUND, OPCODE_WIDTH));
+signal upper_bound_signal : std_logic_vector(OPCODE_WIDTH - 1 downto 0) := std_logic_vector(to_unsigned(UPPER_BOUND, OPCODE_WIDTH));
+signal lower_bound_signal : std_logic_vector(OPCODE_WIDTH - 1 downto 0) := std_logic_vector(to_unsigned(LOWER_BOUND, OPCODE_WIDTH));
 
 signal upper_less_than : std_logic;
 
@@ -31,8 +31,8 @@ component comparator is
             SIGNED_MODE : boolean 
     );
     port(
-        input_a, input_b : std_logic_vector(BIT_WIDTH - 1 downto 0);
-        greater_than, equal, less_than : std_logic
+        input_a, input_b : in std_logic_vector(BIT_WIDTH - 1 downto 0);
+        greater_than, equal, less_than : out std_logic
     );
 end component;
 
@@ -45,8 +45,10 @@ begin
     )
     port map(
         input_a => opcode,
-        input_b => upper_bound,
-        less_than => upper_less_than
+        input_b => upper_bound_signal,
+        less_than => upper_less_than,
+        equal => open,
+        greater_than => open
     );
 
     lower_comparator : comparator
@@ -56,8 +58,10 @@ begin
     )
     port map(
         input_a => opcode,
-        input_b => lower_bound,
-        equal => lower_equal
+        input_b => lower_bound_signal,
+        less_than => open,
+        equal => lower_equal,
+        greater_than => open
     );
 
     lower_equal_negated <= not lower_equal;

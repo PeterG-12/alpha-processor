@@ -33,7 +33,7 @@ begin
     zero_negated_and_xnor <= zero_negated and sign_xnor_overflow;
     zero_or_xor <= zero_f and sign_xor_overflow;
 
-    process
+    process(jump_type_bits, sign_f, overflow_f, zero_f, sign_xor_overflow, sign_xnor_overflow, zero_or_xor, zero_negated_and_xnor, zero_negated)
     begin
         -- if JUMPTYPES_WIDTH is not 3 this part needs to be manually edited to fit new number of jump types
         case jump_type_bits is
