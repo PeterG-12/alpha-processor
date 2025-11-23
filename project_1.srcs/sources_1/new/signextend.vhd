@@ -8,8 +8,8 @@ entity signextend is
         BIT_WIDTH_IN : integer;
         BIT_WIDTH_OUT : integer
     );
-    port(input : std_logic_vector(BIT_WIDTH_IN - 1 downto 0);
-        output : std_logic_vector(BIT_WIDTH_OUT - 1 downto 0)    
+    port(inputs : in std_logic_vector(BIT_WIDTH_IN - 1 downto 0);
+        outputs : out std_logic_vector(BIT_WIDTH_OUT - 1 downto 0)    
     );
 end signextend;
 
@@ -21,7 +21,7 @@ begin
         report "Output width must be greater than or equal to input width."
         severity ERROR;
 
-    output <= (others => input(BIT_WIDTH_IN - 1));
-    output(BIT_WIDTH_IN - 1 downto 0) <= input;
+    outputs <= (others => inputs(BIT_WIDTH_IN - 1));
+    outputs(BIT_WIDTH_IN - 1 downto 0) <= inputs;
 
 end Behavioral;

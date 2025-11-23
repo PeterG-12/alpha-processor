@@ -24,11 +24,11 @@ begin
 
     begin
         if rising_edge(clk) then
-            if write_enable then
+            if write_enable = '1' then
                 internal_memory((to_integer(unsigned(address)))) <= data_input;
             end if;
 
-            if output_enable then
+            if output_enable = '1' then
                 internal_address <= address;
             else
                 internal_address <= internal_address;

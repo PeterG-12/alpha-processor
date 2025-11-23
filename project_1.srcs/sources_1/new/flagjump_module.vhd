@@ -5,7 +5,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity flagjump_module is
     -- Defines the maximum number of jump types
-    generic(JUMPTYPES_WIDTH : integer);
+    generic(JUMPTYPES_WIDTH : integer := 3);
     port(jump_type_bits : in std_logic_vector(JUMPTYPES_WIDTH - 1 downto 0);
         -- flags
         sign_f, overflow_f, zero_f : in std_logic;
