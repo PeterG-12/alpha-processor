@@ -6,7 +6,7 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity FSM_counter is
     generic(COUNT_BIT_WIDTH : integer);
-    port(clk, reset, end_of_cycle : in std_logic;
+    port(clk, reset, end_of_cycle, suspend : in std_logic;
         output_count : out std_logic_vector(COUNT_BIT_WIDTH - 1 downto 0)
     );
 end FSM_counter;
@@ -30,14 +30,16 @@ begin
 
     if reset = '1' then
         internal_count := 0;
-        --internal_to_reset <= '0';
     elsif rising_edge(clk) then
-        --internal_to_reset <= end_of_cycle;
         
         if end_of_cycle = '1' then
             internal_count := 0;
         else
-            internal_count := internal_count + 1;
+            if suspend = '1' then
+                internal_count := internal_count;
+            else
+                internal_count := internal_count + 1;
+            end if;
         end if;
     end if;
 

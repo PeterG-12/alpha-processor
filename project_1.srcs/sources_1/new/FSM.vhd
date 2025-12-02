@@ -10,7 +10,7 @@ entity FSM is
         DATA_WIDTH : integer := 30;
         ADDRESS_SIZE : integer := 9);
     port(opcode : in std_logic_vector(OPCODE_WIDTH - 1 downto 0);
-        clk, reset : in std_logic;
+        clk, reset, suspend : in std_logic;
         -- flags from ALU
         sign_f, overflow_f, zero_f : in std_logic;
     -- Full list of control, select and write-enable signals controlling
@@ -89,11 +89,19 @@ architecture Structural of FSM is
 
     signal end_of_cycle_signal : std_logic;
     signal ROM_address : std_logic_vector(ADDRESS_SIZE - 1 downto 0);
+
+    signal is_jump : std_logic;
     signal consider_jump : std_logic;
     signal jump_type_result : std_logic;
     signal jump_address_select : std_logic_vector(1 downto 0);
     signal ROM_data : std_logic_vector(DATA_WIDTH - 1 downto 0);
     signal output_count : std_logic_vector(COUNT_BIT_WIDTH -1 downto 0);
+
+    -- Multiplexer helpers
+
+    signal jump_type_result_vector : std_logic_vector(0 downto 0);
+    signal consider_jump_vector : std_logic_vector(0 downto 0);
+    signal jump_consider_mux_input_concatenated : std_logic_vector(3 downto 0);
 
 begin
 
@@ -113,7 +121,7 @@ begin
     )
     port map(
         opcode => opcode,
-        is_jump => consider_jump
+        is_jump => is_jump
     );
 
     flagjump_module_0 : flagjump_module
@@ -144,10 +152,12 @@ begin
         BIT_WIDTH => 2
     )
     port map(
-        sel => (0 => jump_type_result),
-        input => "1100",
+        sel => jump_type_result_vector,
+        input => "1110",
         output => jump_address_select
     );
+
+    jump_type_result_vector <= (0 => jump_type_result);
 
 
     jump_consider_multiplexer : multiplexer
@@ -156,10 +166,15 @@ begin
         BIT_WIDTH => 2
     )
     port map(
-        sel => (0 => consider_jump),
-        input => jump_address_select & ROM_data(DATA_WIDTH - 26 downto DATA_WIDTH - 27),
+        sel => consider_jump_vector,
+        input => jump_consider_mux_input_concatenated,
         output => pcsel
     );
+
+    -- ROM_data(DATA_WIDTH - 9); same as irwe
+    consider_jump <= is_jump and not(ROM_data(DATA_WIDTH - 9));
+    consider_jump_vector <= (0 => consider_jump);
+    jump_consider_mux_input_concatenated <= jump_address_select & ROM_data(DATA_WIDTH - 26 downto DATA_WIDTH - 27);
 
     end_of_cycle_signal  <= ROM_data(DATA_WIDTH - 1); --ireset
     pcwe    <= ROM_data(DATA_WIDTH - 2);

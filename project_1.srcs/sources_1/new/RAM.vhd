@@ -4,9 +4,8 @@ use IEEE.NUMERIC_STD.ALL;
 
 
 entity RAM is
-    generic(ADDRESS_SIZE : integer;
-            DATA_WIDTH : integer);
-    port(address : in std_logic_vector(ADDRESS_SIZE - 1 downto 0);
+    generic(DATA_WIDTH : integer);
+    port(address : in std_logic_vector(17 downto 0);
         clk, write_enable, output_enable : in std_logic;
         data_input : in std_logic_vector(DATA_WIDTH - 1 downto 0);
         data_output : out std_logic_vector(DATA_WIDTH - 1 downto 0)
@@ -15,27 +14,29 @@ end RAM;
 
 architecture Behavioral of RAM is
 
-type ram_type is array (0 to 2 ** ADDRESS_SIZE - 1) of std_logic_vector(DATA_WIDTH - 1 downto 0);
+type ram_type is array (0 to 2 ** 15 - 1) of std_logic_vector(DATA_WIDTH - 1 downto 0);
 signal internal_memory : ram_type := (others=>(others => '0'));
-signal internal_address : std_logic_vector(ADDRESS_SIZE - 1 downto 0);
+
+signal cut_address : std_logic_vector(14 downto 0);
+
+
 begin
 
     process(clk)
-
     begin
         if rising_edge(clk) then
             if write_enable = '1' then
-                internal_memory((to_integer(unsigned(address)))) <= data_input;
+                internal_memory((to_integer(unsigned(cut_address)))) <= data_input;
             end if;
 
             if output_enable = '1' then
-                internal_address <= address;
-            else
-                internal_address <= internal_address;
+                data_output <= internal_memory((to_integer(unsigned(cut_address))));
             end if;
         end if;
     end process;
 
-    data_output <= internal_memory((to_integer(unsigned(internal_address))));
+
+    cut_address <= address(17 downto 16) & cut_address(12 downto 0);
+    
 
 end Behavioral;
