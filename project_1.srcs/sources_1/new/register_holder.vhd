@@ -11,7 +11,8 @@ entity register_holder is
     port(adress_x, address_y, dest_address : in std_logic_vector(ADDRESS_SIZE - 1 downto 0);
         write_enable, clk, reset  : in std_logic;
         input_w : in std_logic_vector(BIT_WIDTH - 1 downto 0);
-        output_x, output_y : out std_logic_vector(BIT_WIDTH - 1 downto 0)
+        output_x, output_y : out std_logic_vector(BIT_WIDTH - 1 downto 0);
+        reg_0_out : out std_logic_vector(BIT_WIDTH - 1 downto 0)
         );
 end register_holder;
 
@@ -121,6 +122,6 @@ architecture Structural of register_holder is
             
         end generate registers;
 
-
+        reg_0_out <= register_outputs_concatenated(BIT_WIDTH - 1 downto 0);
 
 end Structural;

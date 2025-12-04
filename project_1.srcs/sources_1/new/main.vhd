@@ -3,7 +3,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 
 entity main is
-    port(clk, reset : in std_logic);
+    port(clk, reset : in std_logic;
+        reg_0_out : out std_logic_vector(15 downto 0));
 end main;
 
 architecture Behavioral of main is
@@ -12,7 +13,7 @@ architecture Behavioral of main is
 
     -- ROM address and content (address has 8 bits here)
     signal romaddr : std_logic_vector(7 downto 0);
-    signal romcont : std_logic_vector(32 downto 0);
+    signal romcont : std_logic_vector(31 downto 0);
 
     signal pcwe    : std_logic := '0';
     signal adrsel  : std_logic_vector(1 downto 0) := "00";
@@ -40,6 +41,10 @@ architecture Behavioral of main is
     signal overflow_f : std_logic;
     signal zero_f : std_logic;
 
+    -- Dsel and bsel vector
+    signal bssel_vector : std_logic_vector(0 downto 0);
+
+    signal dsel_vector : std_logic_vector(0 downto 0);
 
     -- Segment signals
     signal segment_in : std_logic_vector(1 downto 0);
@@ -131,7 +136,9 @@ architecture Behavioral of main is
     signal bs_mux_input_concatenated : std_logic_vector(31 downto 0);
 
     -- RAM
-    signal ramadr : std_logic_vector(31 downto 0);
+    signal ram_data : std_logic_vector(31 downto 0);
+    signal ramw_neg : std_logic;
+    signal ram_out : std_logic_vector(31 downto 0);
 
     -- Regholder
     signal holder_x : std_logic_vector(15 downto 0);
@@ -145,7 +152,10 @@ architecture Behavioral of main is
     signal write_mux_input_concatenated : std_logic_vector(63 downto 0);
     signal write_mux_out : std_logic_vector(15 downto 0);
 
-    
+
+    -- Memory RAM/ROM IR multiplexer
+    signal memory_ir_mux_input_concatenated : std_logic_vector(63 downto 0);
+    signal memory_ir_mux_sel : std_logic_vector(0 downto 0);
 begin
 
     -- Data segment register
@@ -254,7 +264,8 @@ begin
         pcsel => pcsel,
         cswe => cswe,
         dswe => dswe,
-        dsel => dsel
+        dsel => dsel,
+        suspend => alusby
     );
 
 
@@ -359,6 +370,8 @@ begin
     radrx <= ir_out(25 downto 21);
     radry <= ir_out(20 downto 16);
     radrdest <= ir_out(15 downto 11);
+    ar_in <= ir_out(15 downto 0);
+
 
     --Destionation multiplexer
     destination_mux: entity work.multiplexer
@@ -367,11 +380,12 @@ begin
         BIT_WIDTH => 5
     )
     port map(
-        sel => dsel,
+        sel => dsel_vector,
         input => dest_mux_input_concatenated,
         output => dest
     );
 
+    dsel_vector <= (0 => dsel);
     dest_mux_input_concatenated <= radrdest & radrx;
 
     -- ALU
@@ -382,7 +396,7 @@ begin
      port map(
         clk => clk,
         reset => reset,
-        alu_mode => alu_mode,
+        alu_mode => alum,
         A => x_alu_a,
         B => y_alu_b,
         Y => alu_out,
@@ -429,14 +443,16 @@ begin
         BIT_WIDTH => 16
     )
      port map(
-        sel => bssel,
+        sel => bssel_vector,
         input => bs_mux_input_concatenated,
         output => bsmux
     );
 
+    bssel_vector <= (0 => bssel);
+
     bs_mux_input_concatenated <= dr_low_high & alureg_low(7 downto 0) & alureg_low;
 
-    ramadr <= dr_high & bsmux;
+    ram_data <= dr_high & bsmux;
 
 
     -- XY register
@@ -466,7 +482,7 @@ begin
         input => memsel_mux_input_concatenated,
         output => memsel_out
     );
-    memsel_mux_input_concatenated <= "000000000000" & ses_out & seu_out & dr_low;
+    memsel_mux_input_concatenated <= "0000000000000000" & ses_out & seu_out & dr_low;
 
     -- Register-write multiplexer
     regw_mux: entity work.multiplexer
@@ -496,11 +512,60 @@ begin
         reset => reset,
         input_w => write_mux_out,
         output_x => holder_x,
-        output_y => holder_y
+        output_y => holder_y,
+        reg_0_out => reg_0_out
     );
 
-    -- ROM
+
+    -- Deciding between RAM and ROM reading
+    process(segsel, cs_out)
+    begin
+        if cs_out = "00" then
+            memory_ir_mux_sel <= (0 => not segsel);
+        else
+            memory_ir_mux_sel <= (0 => '0');
+        end if;
+    end process;
+
+    -- Memory RAM/ROM IR multiplexer
+    mem_ir_mux: entity work.multiplexer
+     generic map(
+        SEL_NUMBER => 1,
+        BIT_WIDTH => 32
+    )
+     port map(
+        sel => memory_ir_mux_sel,
+        input => memory_ir_mux_input_concatenated,
+        output => ram_mux_out
+    );
+
+    memory_ir_mux_input_concatenated <= romcont & ram_out;
     
+    -- ROM
+    ROM_inst: entity work.ROM
+     generic map(
+        DATA_WIDTH => 32
+    )
+     port map(
+        address => mem_addr,
+        output => romcont
+    );
+
+    -- RAM
+    RAM_inst: entity work.RAM
+     generic map(
+        DATA_WIDTH => 32
+    )
+     port map(
+        address => mem_addr,
+        clk => clk,
+        write_enable => ramw,
+        output_enable => ramw_neg,
+        data_input => ram_data,
+        data_output => ram_out
+    );
+
+    ramw_neg <= not ramw;
     
 
 end Behavioral;

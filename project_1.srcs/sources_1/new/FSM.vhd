@@ -41,11 +41,12 @@ end FSM;
 architecture Structural of FSM is
 
     component FSM_counter is
-        generic(COUNT_BIT_WIDTH : integer);
-        port(clk, reset, end_of_cycle : in std_logic;
-            output_count : out std_logic_vector(COUNT_BIT_WIDTH - 1 downto 0)
-        );
+    generic(COUNT_BIT_WIDTH : integer);
+    port(clk, reset, end_of_cycle, suspend : in std_logic;
+        output_count : out std_logic_vector(COUNT_BIT_WIDTH - 1 downto 0)
+    );
     end component;
+
 
 
     component jumpconsider_module is
@@ -110,6 +111,7 @@ begin
     port map(
         clk => clk, 
         reset => reset, 
+        suspend => suspend,
         end_of_cycle => end_of_cycle_signal,
         output_count => output_count
     );

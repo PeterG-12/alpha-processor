@@ -58,15 +58,23 @@ begin
 
     variable a_ext : signed(BIT_WIDTH_IN downto 0);
     variable b_ext : signed(BIT_WIDTH_IN downto 0);
+    
+    variable a_normal : signed(BIT_WIDTH_IN - 1 downto 0);
+    variable b_normal : signed(BIT_WIDTH_IN - 1 downto 0);
+    
     variable res : signed(BIT_WIDTH_IN downto 0);
     variable add_sub_res : signed(BIT_WIDTH_IN downto 0);
-    variable other_res : std_logic_vector(2 * BIT_WIDTH_IN - 1 downto 0);
+    variable other_res : signed(2 * BIT_WIDTH_IN - 1 downto 0);
 
 
     begin
+        
 
-        a_ext := signed(A);
-        b_ext := signed(B);
+        a_normal := signed(A);
+        b_normal := signed(B);
+        
+        a_ext := signed("0" & A);
+        b_ext := signed("0" & B);
 
         cf := '0';
         sf := '0';
@@ -98,38 +106,37 @@ begin
                 end if;
                 
             when "0010" =>
-                res(BIT_WIDTH_IN - 1 downto 0) := a_ext and b_ext;
+                res(BIT_WIDTH_IN - 1 downto 0) := a_normal and b_normal;
 
             when "0011" =>
-                res(BIT_WIDTH_IN - 1 downto 0) := a_ext or b_ext;
+                res(BIT_WIDTH_IN - 1 downto 0) := a_normal or b_normal;
             
             when "0100" =>
-                res(BIT_WIDTH_IN - 1 downto 0) := a_ext xor b_ext;
+                res(BIT_WIDTH_IN - 1 downto 0) := a_normal xor b_normal;
                 
             when "0101" =>
-                res(BIT_WIDTH_IN - 1 downto 0) := signed(shift_left(unsigned(a_ext), to_integer(unsigned(b_ext))));
+                res(BIT_WIDTH_IN - 1 downto 0) := signed(shift_left(unsigned(a_normal), to_integer(unsigned(b_normal))));
 
             when "0110" =>
-                res(BIT_WIDTH_IN - 1 downto 0) := signed(shift_right(unsigned(a_ext), to_integer(unsigned(b_ext))));
+                res(BIT_WIDTH_IN - 1 downto 0) := signed(shift_right(unsigned(a_normal), to_integer(unsigned(b_normal))));
 
             when "0111" =>
-                res(BIT_WIDTH_IN - 1 downto 0) := signed(shift_right(signed(a_ext), to_integer(unsigned(b_ext))));
+                res(BIT_WIDTH_IN - 1 downto 0) := signed(shift_right(signed(a_normal), to_integer(unsigned(b_normal))));
 
             when "1000" =>
-                res(BIT_WIDTH_IN - 1 downto 0) := signed(rotate_left(unsigned(a_ext), to_integer(unsigned(b_ext))));
+                res(BIT_WIDTH_IN - 1 downto 0) := signed(rotate_left(unsigned(a_normal), to_integer(unsigned(b_normal))));
 
             when "1001" =>
-                res(BIT_WIDTH_IN - 1 downto 0) := signed(rotate_right(unsigned(a_ext), to_integer(unsigned(b_ext))));
+                res(BIT_WIDTH_IN - 1 downto 0) := signed(rotate_right(unsigned(a_normal), to_integer(unsigned(b_normal))));
 
             when "1010" =>
-                add_sub_res := -a_ext;
-                res       := (resize(add_sub_res(BIT_WIDTH_IN - 1 downto 0), res'length));
+                res       := (resize(-a_normal, res'length));
 
             when "1011" =>
-                res := signed(resize(unsigned(a_ext) * unsigned(b_ext), res'length));
+                other_res := signed(resize(unsigned(a_normal) * unsigned(b_normal), other_res'length));
 
             when "1100" =>
-                res := (resize(signed(a_ext) * signed(b_ext), res'length));
+                other_res := (resize(signed(a_normal) * signed(b_normal), other_res'length));
             when others => 
                 res := (others => '0');
         end case;
@@ -138,9 +145,16 @@ begin
         zero_f <= zf;
         sign_f <= sf;
         overflow_f <= ovf;
-
-        combinational_result <= std_logic_vector(res);
-
+        
+        
+        -- if multiplication high bits need to be saved
+        if (alu_mode = "1011" or alu_mode = "1100") then
+            combinational_result <= std_logic_vector(other_res);
+        else -- else: high bits ignored
+            combinational_result <= "000000000000000" & std_logic_vector(res);
+        end if;
+        
+        
     end process;
     -- Division handler
     process(alu_mode)
