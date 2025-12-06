@@ -7,7 +7,7 @@ entity MMAP is
             OPCODE_WIDTH : integer := 6;
             ADDRESS_SIZE : integer;
             START_ADDRESS : integer);
-    port(mem_addr : in std_logic_vector(BIT_WIDTH -1 downto 0);
+    port(mem_addr : in std_logic_vector(BIT_WIDTH + 1 downto 0);
         opcode : in std_logic_vector(OPCODE_WIDTH - 1 downto 0);
         irwe : in std_logic;
         sel_consider : out std_logic;
@@ -20,6 +20,8 @@ signal is_mapped : std_logic;
 signal normalized_address : unsigned(BIT_WIDTH - 1 downto 0);
 signal normalized_address_vector : std_logic_vector(BIT_WIDTH - 1 downto 0);
 constant start_address_unsigned : unsigned := to_unsigned(START_ADDRESS, BIT_WIDTH);
+-- Ignoring segments
+signal internal_mem_addres : std_logic_vector(BIT_WIDTH - 1 downto 0);
 
 begin
 
@@ -34,7 +36,11 @@ begin
 end process;
 
 
-normalized_address <= unsigned(mem_addr) - start_address_unsigned;
+internal_mem_addres <= mem_addr(BIT_WIDTH - 1 downto 0);
+
+normalized_address <= unsigned(internal_mem_addres) - start_address_unsigned;
+
+
 
 process(normalized_address)
 begin

@@ -15,7 +15,7 @@ end RAM;
 architecture Behavioral of RAM is
 
 type ram_type is array (0 to 2 ** 15 - 1) of std_logic_vector(DATA_WIDTH - 1 downto 0);
-signal internal_memory : ram_type := (others=>(others => '1'));
+signal internal_memory : ram_type := (others=>(others => '0'));
 
 signal cut_address : std_logic_vector(14 downto 0);
 

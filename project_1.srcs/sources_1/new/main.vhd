@@ -4,16 +4,22 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity main is
     port(clk_extrn, reset : in std_logic;
-        clk_out : out std_logic;
+        --clk_out : out std_logic;
         -- SSD outputs
         an : out std_logic_vector(3 downto 0);
-        seg : out std_logic_vector(6 downto 0)
-
-       
+        seg : out std_logic_vector(6 downto 0);
+        --out1 : out std_logic_vector(15 downto 0);
+        out0 : out std_logic_vector(15 downto 0);
+        in0 : in std_logic_vector(15 downto 0)
+        --in1 : in std_logic_vector(15 downto 0)
         );
 end main;
 
 architecture Behavioral of main is
+    signal clk_out : std_logic;
+    signal out1 : std_logic_vector(15 downto 0);
+    signal in1 : std_logic_vector(15 downto 0);
+
     -- Internal clock
     signal clk : std_logic;
 
@@ -145,6 +151,7 @@ architecture Behavioral of main is
     signal bs_mux_input_concatenated : std_logic_vector(31 downto 0);
 
     -- RAM
+    signal ramwe : std_logic;
     signal ram_data : std_logic_vector(31 downto 0);
     signal ramw_neg : std_logic;
     signal ram_out : std_logic_vector(31 downto 0);
@@ -169,6 +176,20 @@ architecture Behavioral of main is
     -- Peripheral output dmux outputs held in a single vector
     signal out_peri_dmux_out_vector : std_logic_vector(31 downto 0);
     signal mmap_consider_vector : std_logic_vector(0 downto 0);
+    signal mmap_sel : std_logic_vector(4 downto 0);
+    signal mmap_consider : std_logic;
+
+    -- From input peripheral multiplexer helpers
+    signal from_input_peripheral_mux_input_concatenated : std_logic_vector(63 downto 0);
+    signal input_peripheral_mux_ir : std_logic_vector(31 downto 0);
+
+    -- To output peripheral demultiplexer helpers
+    signal bsel_mux_out_to_output_peripheral_in : std_logic_vector(31 downto 0);
+    signal to_output_dmux_output_concatenated : std_logic_vector(63 downto 0);
+
+    -- Peripheral register holder
+    signal pr_datain : std_logic_vector(15 downto 0);
+    signal pr_dataout : std_logic_vector(15 downto 0);
 
 
 begin
@@ -312,7 +333,7 @@ begin
         BIT_WIDTH => 32
     )
      port map(
-        input => ram_mux_out,
+        input => input_peripheral_mux_ir,
         write_enable => drwe,
         clk => clk,
         reset => reset,
@@ -396,7 +417,7 @@ begin
         BIT_WIDTH => 32
     )
      port map(
-        input => ram_mux_out,
+        input => input_peripheral_mux_ir,
         write_enable => irwe,
         clk => clk,
         reset => reset,
@@ -489,7 +510,7 @@ begin
 
     bs_mux_input_concatenated <= dr_low_high & alureg_low(7 downto 0) & alureg_low;
 
-    ram_data <= dr_high & bsmux;
+    bsel_mux_out_to_output_peripheral_in <= dr_high & bsmux;
 
 
     -- XY register
@@ -596,13 +617,80 @@ begin
      port map(
         address => mem_addr,
         clk => clk,
-        write_enable => ramw,
+        write_enable => ramwe,
         output_enable => ramw_neg,
         data_input => ram_data,
         data_output => ram_out
     );
-
+    -- Only write if not currently performin memory mapping
+    ramwe <= (not mmap_consider) and ramw;
     ramw_neg <= not ramw;
+    
+    -- Memory mapping module
+    MMAP_inst: entity work.MMAP
+     generic map(
+        BIT_WIDTH => 16,
+        OPCODE_WIDTH => 6,
+        ADDRESS_SIZE => 5,
+        START_ADDRESS => 255
+    )
+     port map(
+        mem_addr => mem_addr,
+        opcode => opcode,
+        irwe => irwe,
+        sel_consider => mmap_consider,
+        sel_out => mmap_sel
+    );
+
+    mmap_consider_vector <= (0 => mmap_consider);
+
+    from_input_peripheral_mux: entity work.multiplexer
+     generic map(
+        SEL_NUMBER => 1,
+        BIT_WIDTH => 32
+    )
+     port map(
+        sel => mmap_consider_vector,
+        input => from_input_peripheral_mux_input_concatenated,
+        output => input_peripheral_mux_ir
+    );
+
+    from_input_peripheral_mux_input_concatenated <= "0000000000000000" & pr_dataout & ram_mux_out;
+
+    to_output_demultiplexer: entity work.demultiplexer
+     generic map(
+        SEL_NUMBER => 1,
+        BIT_WIDTH => 32
+    )
+     port map(
+        sel => mmap_consider_vector,
+        input => bsel_mux_out_to_output_peripheral_in,
+        output => to_output_dmux_output_concatenated
+    );
+
+    -- Only the low 16 bit word is needed
+    pr_datain <= to_output_dmux_output_concatenated(47 downto 32);
+    ram_data <= to_output_dmux_output_concatenated(31 downto 0);
+
+
+    peripherals_regs_inst: entity work.peripherals_regs
+     generic map(
+        BIT_WIDTH => 16,
+        ADDRESS_SIZE => 5
+    )
+     port map(
+        clk => clk,
+        reset => reset,
+        ramwe => ramw,
+        mmap_consider => mmap_consider,
+        out0 => out0,
+        out1 => out1,
+        pdatout => pr_dataout,
+        in0 => in0,
+        in1 => in1,
+        pdatin => pr_datain,
+        mmap_sel => mmap_sel
+    );
     
 
 end Behavioral;

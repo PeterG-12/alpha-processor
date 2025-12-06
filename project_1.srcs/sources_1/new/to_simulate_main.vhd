@@ -1,13 +1,23 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
+use IEEE.NUMERIC_STD.ALL;
 
 entity to_simulate_main is
-    port(clk, reset : in std_logic;
+    port(
+        clk, reset : in std_logic;
 
-        -- DEBUG START
+        -- ==========================================
+        -- REAL I/O PORTS
+        -- ==========================================
+        out0 : out std_logic_vector(15 downto 0);
+        out1 : out std_logic_vector(15 downto 0);
+        in0  : in std_logic_vector(15 downto 0);
+        in1  : in std_logic_vector(15 downto 0);
 
-        reg_0_out : out std_logic_vector(15 downto 0);
+        -- ==========================================
+        -- DEBUG PORTS (FULL VISIBILITY)
+        -- ==========================================
+        reg_0_out                        : out std_logic_vector(15 downto 0);
 
         dbg_opcode                       : out std_logic_vector(5 downto 0);
         dbg_romcont                      : out std_logic_vector(31 downto 0);
@@ -83,7 +93,10 @@ entity to_simulate_main is
         dbg_bs_mux_input_concatenated    : out std_logic_vector(31 downto 0);
         dbg_ram_data                     : out std_logic_vector(31 downto 0);
         dbg_ramw_neg                     : out std_logic;
+        
+        -- RAM OUT (This is the one you were missing)
         dbg_ram_out                      : out std_logic_vector(31 downto 0);
+        
         dbg_holder_x                     : out std_logic_vector(15 downto 0);
         dbg_holder_y                     : out std_logic_vector(15 downto 0);
         dbg_memsel_mux_input_concatenated: out std_logic_vector(63 downto 0);
@@ -91,21 +104,24 @@ entity to_simulate_main is
         dbg_write_mux_input_concatenated : out std_logic_vector(63 downto 0);
         dbg_write_mux_out                : out std_logic_vector(15 downto 0);
         dbg_memory_ir_mux_input_concatenated : out std_logic_vector(63 downto 0);
-        dbg_memory_ir_mux_sel            : out std_logic_vector(0 downto 0)
-        
-        -- DEBUG END
-        );
+        dbg_memory_ir_mux_sel            : out std_logic_vector(0 downto 0);
+
+        -- DEBUG EXTENSIONS FOR MMIO
+        dbg_mmap_consider                : out std_logic;
+        dbg_peri_out0                    : out std_logic_vector(15 downto 0);
+        dbg_peri_out1                    : out std_logic_vector(15 downto 0)
+    );
 end to_simulate_main;
 
 architecture Behavioral of to_simulate_main is
 
-
-    signal reg_0_internal : std_logic_vector(15 downto 0);
-
-    signal opcode : std_logic_vector(5 downto 0);
-
-    -- ROM address and content (address has 8 bits here)
-    signal romcont : std_logic_vector(31 downto 0);
+    -- =========================================================
+    -- INITIALIZED SIGNALS (Prevents 'U' values at simulation start)
+    -- =========================================================
+    
+    signal reg_0_internal : std_logic_vector(15 downto 0) := (others => '0');
+    signal opcode : std_logic_vector(5 downto 0) := (others => '0');
+    signal romcont : std_logic_vector(31 downto 0) := (others => '0');
 
     signal pcwe    : std_logic := '0';
     signal adrsel  : std_logic_vector(1 downto 0) := "00";
@@ -128,132 +144,109 @@ architecture Behavioral of to_simulate_main is
     signal dswe    : std_logic := '0';
     signal dsel    : std_logic := '0';
 
-    signal sign_f : std_logic;
-    signal carry_f : std_logic;
-    signal overflow_f : std_logic;
-    signal zero_f : std_logic;
+    signal sign_f : std_logic := '0';
+    signal carry_f : std_logic := '0';
+    signal overflow_f : std_logic := '0';
+    signal zero_f : std_logic := '0';
 
-    -- Dsel and bsel vector
-    signal bssel_vector : std_logic_vector(0 downto 0);
+    signal bssel_vector : std_logic_vector(0 downto 0) := "0";
+    signal dsel_vector : std_logic_vector(0 downto 0) := "0";
 
-    signal dsel_vector : std_logic_vector(0 downto 0);
+    signal segment_in : std_logic_vector(1 downto 0) := "00";
+    signal cs_out : std_logic_vector(1 downto 0) := "00";
+    signal ds_out : std_logic_vector(1 downto 0) := "00";
 
-    -- Segment signals
-    signal segment_in : std_logic_vector(1 downto 0);
+    signal cs_ds_concat : std_logic_vector(3 downto 0) := (others => '0');
+    signal seg_sel_vec : std_logic_vector(0 downto 0) := "0";
+    signal seg_mux : std_logic_vector(1 downto 0) := "00";
 
-    signal cs_out : std_logic_vector(1 downto 0);
-    signal ds_out : std_logic_vector(1 downto 0);
+    signal pcsel_in :  std_logic_vector(15 downto 0) := (others => '0');
+    signal pc_out :  std_logic_vector(15 downto 0) := (others => '0');
 
-    -- Segment MUX helpers
-    signal cs_ds_concat : std_logic_vector(3 downto 0);
-    signal seg_sel_vec : std_logic_vector(0 downto 0);
+    signal adr_mux :  std_logic_vector(15 downto 0) := (others => '0');
+    signal adr_mux_input_concatenated : std_logic_vector(63 downto 0) := (others => '0');
+    signal mem_addr  :  std_logic_vector(17 downto 0) := (others => '0');
 
-    signal seg_mux : std_logic_vector(1 downto 0);
+    signal ram_mux_out : std_logic_vector(31 downto 0) := (others => '0');
+    signal dr_out :  std_logic_vector(31 downto 0) := (others => '0');
+    signal dr_low :  std_logic_vector(15 downto 0) := (others => '0');
+    signal dr_high :  std_logic_vector(15 downto 0) := (others => '0');
+    signal dr_low_low : std_logic_vector(7 downto 0) := (others => '0');
+    signal dr_low_high : std_logic_vector(7 downto 0) := (others => '0');
 
+    signal seu_out : std_logic_vector(15 downto 0) := (others => '0');
+    signal ses_out : std_logic_vector(15 downto 0) := (others => '0');
 
-    -- Program counter signals
-    signal pcsel_in :  std_logic_vector(15 downto 0);
-    signal pc_out :  std_logic_vector(15 downto 0);
+    signal alureg_low : std_logic_vector(15 downto 0) := (others => '0');
+    signal alureg_high : std_logic_vector(15 downto 0) := (others => '0');
+    signal alureg_out : std_logic_vector(31 downto 0) := (others => '0');
+    signal alu_out : std_logic_vector(31 downto 0) := (others => '0');
+    signal alu_out_low : std_logic_vector(15 downto 0) := (others => '0');
 
-    -- RAM address selector MUX signal
-    signal adr_mux :  std_logic_vector(15 downto 0);
-    signal adr_mux_input_concatenated : std_logic_vector(63 downto 0);
+    signal ar_in : std_logic_vector(15 downto 0) := (others => '0');
+    signal ar_out : std_logic_vector(15 downto 0) := (others => '0');
 
-    -- Memory addres junction signal
-    signal mem_addr  :  std_logic_vector(17 downto 0);
+    signal pcsel_mux_input_concatenated : std_logic_vector(63 downto 0) := (others => '0');
+    signal ir_out : std_logic_vector(31 downto 0) := (others => '0');
 
+    signal radrx : std_logic_vector(4 downto 0) := (others => '0');
+    signal radry : std_logic_vector(4 downto 0) := (others => '0');
+    signal radrdest : std_logic_vector(4 downto 0) := (others => '0');
+    signal dest : std_logic_vector(4 downto 0) := (others => '0');
+    signal dest_mux_input_concatenated : std_logic_vector(9 downto 0) := (others => '0');
 
-    -- Data register signals
-    signal ram_mux_out : std_logic_vector(31 downto 0);
+    signal x_alu_a : std_logic_vector(15 downto 0) := (others => '0');
+    signal y_alu_b : std_logic_vector(15 downto 0) := (others => '0');
+    signal alusby : std_logic := '0';
 
-    signal dr_out :  std_logic_vector(31 downto 0);
+    signal x_mux_input_concatenated : std_logic_vector(63 downto 0) := (others => '0');
+    signal y_mux_input_concatenated : std_logic_vector(63 downto 0) := (others => '0');
 
-    signal dr_low :  std_logic_vector(15 downto 0);
-    signal dr_high :  std_logic_vector(15 downto 0);
+    signal xy_xout : std_logic_vector(15 downto 0) := (others => '0');
+    signal xy_yout : std_logic_vector(15 downto 0) := (others => '0');
+    signal xy_out : std_logic_vector(31 downto 0) := (others => '0');
+    signal xy_in : std_logic_vector(31 downto 0) := (others => '0');
 
-    signal dr_low_low : std_logic_vector(7 downto 0);
-    signal dr_low_high : std_logic_vector(7 downto 0);
+    signal bsmux : std_logic_vector(15 downto 0) := (others => '0');
+    signal bs_mux_input_concatenated : std_logic_vector(31 downto 0) := (others => '0');
 
+    signal ram_data : std_logic_vector(31 downto 0) := (others => '0');
+    signal ramw_neg : std_logic := '1'; -- Inverted write enable usually defaults high
+    signal ram_out : std_logic_vector(31 downto 0) := (others => '0');
 
-    -- Sign extension signals
-    signal seu_out : std_logic_vector(15 downto 0);
-    signal ses_out : std_logic_vector(15 downto 0);
+    signal holder_x : std_logic_vector(15 downto 0) := (others => '0');
+    signal holder_y : std_logic_vector(15 downto 0) := (others => '0');
 
-    -- ALU helpers
+    signal memsel_mux_input_concatenated : std_logic_vector(63 downto 0) := (others => '0');
+    signal memsel_out : std_logic_vector(15 downto 0) := (others => '0');
+
+    signal write_mux_input_concatenated : std_logic_vector(63 downto 0) := (others => '0');
+    signal write_mux_out : std_logic_vector(15 downto 0) := (others => '0');
+
+    signal memory_ir_mux_input_concatenated : std_logic_vector(63 downto 0) := (others => '0');
+    signal memory_ir_mux_sel : std_logic_vector(0 downto 0) := "0";
+
+    -- MMIO SIGNALS (Initialized)
+    signal mmap_consider : std_logic := '0';
+    signal mmap_sel_idx  : std_logic_vector(4 downto 0) := (others => '0'); 
     
-    signal alureg_low : std_logic_vector(15 downto 0);
-    signal alureg_high : std_logic_vector(15 downto 0);
-    signal alureg_out : std_logic_vector(31 downto 0);
-    signal alu_out : std_logic_vector(31 downto 0);
-    signal alu_out_low : std_logic_vector(15 downto 0);
+    signal peri_out0_internal : std_logic_vector(15 downto 0) := (others => '0');
+    signal peri_out1_internal : std_logic_vector(15 downto 0) := (others => '0');
+    
+    signal peri_data_out_raw : std_logic_vector(15 downto 0) := (others => '0');
+    signal peri_data_out_padded : std_logic_vector(31 downto 0) := (others => '0');
 
-    -- Address register signals
-    signal ar_in : std_logic_vector(15 downto 0);
-    signal ar_out : std_logic_vector(15 downto 0);
+    signal ram_write_effective : std_logic := '0';
+    signal ram_read_data_effective : std_logic_vector(31 downto 0) := (others => '0');
+    signal physical_ram_out : std_logic_vector(31 downto 0) := (others => '0');
 
-
-    -- PCSEL multiplexer helper
-    signal pcsel_mux_input_concatenated : std_logic_vector(63 downto 0);
-
-    -- Instruction register
-    signal ir_out : std_logic_vector(31 downto 0);
-
-    signal radrx : std_logic_vector(4 downto 0);
-    signal radry : std_logic_vector(4 downto 0);
-    signal radrdest : std_logic_vector(4 downto 0);
-
-    signal dest : std_logic_vector(4 downto 0);
-
-    -- Destination mux helper
-    signal dest_mux_input_concatenated : std_logic_vector(9 downto 0);
-
-    -- ALU
-    signal x_alu_a : std_logic_vector(15 downto 0);
-    signal y_alu_b : std_logic_vector(15 downto 0);
-    signal alusby : std_logic;
-
-    -- Pre ALU MUX helpers
-    signal x_mux_input_concatenated : std_logic_vector(63 downto 0);
-    signal y_mux_input_concatenated : std_logic_vector(63 downto 0);
-
-
-    -- XY reg
-    signal xy_xout : std_logic_vector(15 downto 0);
-    signal xy_yout : std_logic_vector(15 downto 0);
-    signal xy_out : std_logic_vector(31 downto 0);
-    signal xy_in : std_logic_vector(31 downto 0);
-
-    -- B select multiplexer
-    signal bsmux : std_logic_vector(15 downto 0);
-    signal bs_mux_input_concatenated : std_logic_vector(31 downto 0);
-
-    -- RAM
-    signal ram_data : std_logic_vector(31 downto 0);
-    signal ramw_neg : std_logic;
-    signal ram_out : std_logic_vector(31 downto 0);
-
-    -- Regholder
-    signal holder_x : std_logic_vector(15 downto 0);
-    signal holder_y : std_logic_vector(15 downto 0);
-
-    -- Memsel multiplexer
-    signal memsel_mux_input_concatenated : std_logic_vector(63 downto 0);
-    signal memsel_out : std_logic_vector(15 downto 0);
-
-    -- Register-write multiplexer
-    signal write_mux_input_concatenated : std_logic_vector(63 downto 0);
-    signal write_mux_out : std_logic_vector(15 downto 0);
-
-
-    -- Memory RAM/ROM IR multiplexer
-    signal memory_ir_mux_input_concatenated : std_logic_vector(63 downto 0);
-    signal memory_ir_mux_sel : std_logic_vector(0 downto 0);
 begin
 
-
-
     reg_0_out <= reg_0_internal;
-    -- DEBUG START
+
+    -- =========================================================
+    -- DEBUG ASSIGNMENTS
+    -- =========================================================
     dbg_opcode                       <= opcode;
     dbg_romcont                      <= romcont;
     dbg_pcwe                         <= pcwe;
@@ -328,7 +321,7 @@ begin
     dbg_bs_mux_input_concatenated    <= bs_mux_input_concatenated;
     dbg_ram_data                     <= ram_data;
     dbg_ramw_neg                     <= ramw_neg;
-    dbg_ram_out                      <= ram_out;
+    dbg_ram_out                      <= ram_out; -- Connected correctly now
     dbg_holder_x                     <= holder_x;
     dbg_holder_y                     <= holder_y;
     dbg_memsel_mux_input_concatenated<= memsel_mux_input_concatenated;
@@ -337,14 +330,24 @@ begin
     dbg_write_mux_out                <= write_mux_out;
     dbg_memory_ir_mux_input_concatenated <= memory_ir_mux_input_concatenated;
     dbg_memory_ir_mux_sel            <= memory_ir_mux_sel;
-    -- DEBUG END
+    
+    -- New Debug Outputs
+    dbg_mmap_consider <= mmap_consider;
+    dbg_peri_out0 <= peri_out0_internal;
+    dbg_peri_out1 <= peri_out1_internal;
+
+    -- Real I/O Assignments
+    out0 <= peri_out0_internal;
+    out1 <= peri_out1_internal;
+
+    -- =========================================================
+    -- COMPONENT INSTANTIATIONS
+    -- =========================================================
+
     segment_in <= alureg_low(1 downto 0);
 
-    -- Data segment register
     ds_reg: entity work.custom_register
-    generic map(
-        BIT_WIDTH => 2
-    )
+    generic map( BIT_WIDTH => 2 )
     port map(
         input => segment_in,
         write_enable => dswe,
@@ -353,11 +356,8 @@ begin
         output => ds_out
     );
 
-    -- Code segment register
     cs_reg : entity work.custom_register
-     generic map(
-        BIT_WIDTH => 2
-    )
+    generic map( BIT_WIDTH => 2 )
     port map(
         input => segment_in,
         write_enable => cswe,
@@ -366,13 +366,9 @@ begin
         output => cs_out
     );
 
-    -- Segment selector multiplexer
     segment_selector_mux : entity work.multiplexer
-    generic map(
-        SEL_NUMBER => 1,
-        BIT_WIDTH => 2
-    )
-     port map(
+    generic map( SEL_NUMBER => 1, BIT_WIDTH => 2 )
+    port map(
         sel => seg_sel_vec,
         input => cs_ds_concat,
         output => seg_mux
@@ -381,12 +377,9 @@ begin
     cs_ds_concat <= cs_out & ds_out;
     seg_sel_vec <= (others => segsel);
 
-    -- Program counter register
     pc_reg : entity work.custom_register
-     generic map(
-        BIT_WIDTH => 16
-    )
-     port map(
+    generic map( BIT_WIDTH => 16 )
+    port map(
         input => pcsel_in,
         write_enable => pcwe,
         clk => clk,
@@ -394,33 +387,26 @@ begin
         output => pc_out
     );
 
-    -- Address selector multiplexer
     adr_sel_mux: entity work.multiplexer
-     generic map(
-        SEL_NUMBER => 2,
-        BIT_WIDTH => 16
-    )
-     port map(
+    generic map( SEL_NUMBER => 2, BIT_WIDTH => 16 )
+    port map(
         sel => adrsel,
         input => adr_mux_input_concatenated,
         output => adr_mux
     );
 
     adr_mux_input_concatenated <= "0000000000000000" & xy_yout & ar_out & pc_out;
-
-    -- Memory addres junction
     mem_addr <= seg_mux & adr_mux;
 
-    -- FSM
     FSM_inst: entity work.FSM
-     generic map(
+    generic map(
         OPCODE_WIDTH => 6,
         COUNT_BIT_WIDTH => 3,
         JUMPTYPES_WIDTH => 3,
         DATA_WIDTH => 30,
         ADDRESS_SIZE => 9
     )
-     port map(
+    port map(
         opcode => opcode,
         clk => clk,
         reset => reset,
@@ -450,13 +436,9 @@ begin
         suspend => alusby
     );
 
-
-    -- Data register
     data_reg: entity work.custom_register
-     generic map(
-        BIT_WIDTH => 32
-    )
-     port map(
+    generic map( BIT_WIDTH => 32 )
+    port map(
         input => ram_mux_out,
         write_enable => drwe,
         clk => clk,
@@ -469,35 +451,23 @@ begin
     dr_low_low <= dr_low(7 downto 0);
     dr_low_high <= dr_low(15 downto 8);
 
-    -- Signed extend
     signextend_signed: entity work.signextend
-     generic map(
-        BIT_WIDTH_IN => 8,
-        BIT_WIDTH_OUT => 16
-    )
-     port map(
+    generic map( BIT_WIDTH_IN => 8, BIT_WIDTH_OUT => 16 )
+    port map(
         inputs => dr_low_low,
         outputs => ses_out
     );
 
-    -- Unsigned (zero) extend
     signextend_unsigned: entity work.zeroextend
-     generic map(
-        BIT_WIDTH_IN => 8,
-        BIT_WIDTH_OUT => 16
-    )
-     port map(
+    generic map( BIT_WIDTH_IN => 8, BIT_WIDTH_OUT => 16 )
+    port map(
         inputs => dr_low_low,
         outputs => seu_out
     );
 
-
-    -- ALU reg
     alu_reg: entity work.custom_register
-     generic map(
-        BIT_WIDTH => 32
-    )
-     port map(
+    generic map( BIT_WIDTH => 32 )
+    port map(
         input => alu_out,
         write_enable => aluwe,
         clk => clk,
@@ -509,12 +479,9 @@ begin
     alureg_high <= alureg_out(31 downto 16);
     alu_out_low <= alu_out(15 downto 0);
 
-    -- Address register
     address_reg: entity work.custom_register
-     generic map(
-        BIT_WIDTH => 16
-    )
-     port map(
+    generic map( BIT_WIDTH => 16 )
+    port map(
         input => ar_in,
         write_enable => arwe,
         clk => clk,
@@ -522,12 +489,8 @@ begin
         output => ar_out
     );
 
-    -- Program counter multiplexer
     pcsel_mux: entity work.multiplexer
-     generic map(
-        SEL_NUMBER => 2,
-        BIT_WIDTH => 16
-    )
+    generic map( SEL_NUMBER => 2, BIT_WIDTH => 16 )
     port map(
         sel => pcsel,
         input => pcsel_mux_input_concatenated,
@@ -535,12 +498,9 @@ begin
     );
     pcsel_mux_input_concatenated <= ar_out & pc_out & alureg_low & alu_out_low;
 
-    -- Instruction register
     instr_reg: entity work.custom_register
-     generic map(
-        BIT_WIDTH => 32
-    )
-     port map(
+    generic map( BIT_WIDTH => 32 )
+    port map(
         input => ram_mux_out,
         write_enable => irwe,
         clk => clk,
@@ -554,13 +514,8 @@ begin
     radrdest <= ir_out(15 downto 11);
     ar_in <= ir_out(15 downto 0);
 
-
-    --Destionation multiplexer
     destination_mux: entity work.multiplexer
-    generic map(
-        SEL_NUMBER => 1,
-        BIT_WIDTH => 5
-    )
+    generic map( SEL_NUMBER => 1, BIT_WIDTH => 5 )
     port map(
         sel => dsel_vector,
         input => dest_mux_input_concatenated,
@@ -570,12 +525,9 @@ begin
     dsel_vector <= (0 => dsel);
     dest_mux_input_concatenated <= radrdest & radrx;
 
-    -- ALU
     ALU_inst: entity work.ALU
-     generic map(
-        BIT_WIDTH_IN => 16
-    )
-     port map(
+    generic map( BIT_WIDTH_IN => 16 )
+    port map(
         clk => clk,
         reset => reset,
         alu_mode => alum,
@@ -589,13 +541,9 @@ begin
         ALU_standby => alusby
     );
 
-    -- X multiplexer
     x_mux: entity work.multiplexer
-     generic map(
-        SEL_NUMBER => 2,
-        BIT_WIDTH => 16
-    )
-     port map(
+    generic map( SEL_NUMBER => 2, BIT_WIDTH => 16 )
+    port map(
         sel => xsel,
         input => x_mux_input_concatenated,
         output => x_alu_a
@@ -603,13 +551,9 @@ begin
 
     x_mux_input_concatenated <= "0000000000000000" & "0000000000000000" & pc_out & xy_xout;
 
-    -- Y multiplexer
     y_mux: entity work.multiplexer
-     generic map(
-        SEL_NUMBER => 2,
-        BIT_WIDTH => 16
-    )
-     port map(
+    generic map( SEL_NUMBER => 2, BIT_WIDTH => 16 )
+    port map(
         sel => ysel,
         input => y_mux_input_concatenated,
         output => y_alu_b
@@ -617,32 +561,23 @@ begin
     
     y_mux_input_concatenated <= "0000000000000000" & "0000000000000001" & "0000000000000000" & xy_yout;
 
-
-    -- B select multiplexer
     bs_mux: entity work.multiplexer
-     generic map(
-        SEL_NUMBER => 1,
-        BIT_WIDTH => 16
-    )
-     port map(
+    generic map( SEL_NUMBER => 1, BIT_WIDTH => 16 )
+    port map(
         sel => bssel_vector,
         input => bs_mux_input_concatenated,
         output => bsmux
     );
 
     bssel_vector <= (0 => bssel);
-
     bs_mux_input_concatenated <= dr_low_high & alureg_low(7 downto 0) & alureg_low;
 
+    -- RAM Data Composition
     ram_data <= dr_high & bsmux;
 
-
-    -- XY register
     xy_reg: entity work.custom_register
-     generic map(
-        BIT_WIDTH => 32
-    )
-     port map(
+    generic map( BIT_WIDTH => 32 )
+    port map(
         input => xy_in,
         write_enable => xywe,
         clk => clk,
@@ -653,39 +588,27 @@ begin
     xy_yout <= xy_out(31 downto 16);
     xy_in <= holder_y & holder_x;
 
-    -- Memory read multiplexer
     memsel_mux: entity work.multiplexer
-     generic map(
-        SEL_NUMBER => 2,
-        BIT_WIDTH => 16
-    )
-     port map(
+    generic map( SEL_NUMBER => 2, BIT_WIDTH => 16 )
+    port map(
         sel => memssel,
         input => memsel_mux_input_concatenated,
         output => memsel_out
     );
     memsel_mux_input_concatenated <= "0000000000000000" & ses_out & seu_out & dr_low;
 
-    -- Register-write multiplexer
     regw_mux: entity work.multiplexer
-     generic map(
-        SEL_NUMBER => 2,
-        BIT_WIDTH => 16
-    )
-     port map(
+    generic map( SEL_NUMBER => 2, BIT_WIDTH => 16 )
+    port map(
         sel => rwsel,
         input => write_mux_input_concatenated,
         output => write_mux_out
     );
     write_mux_input_concatenated <= ar_in &  alureg_high & alureg_low & memsel_out;
 
-    -- Register holder
     register_holder_inst: entity work.register_holder
-     generic map(
-        BIT_WIDTH => 16,
-        ADDRESS_SIZE => 5
-    )
-     port map(
+    generic map( BIT_WIDTH => 16, ADDRESS_SIZE => 5 )
+    port map(
         adress_x => radrx,
         address_y => radry,
         dest_address => dest,
@@ -699,7 +622,57 @@ begin
     );
 
 
-    -- Deciding between RAM and ROM reading
+    -- 1. Address Mapping
+    mmap_inst : entity work.MMAP
+    generic map(
+        BIT_WIDTH => 16,
+        OPCODE_WIDTH => 6,
+        ADDRESS_SIZE => 5,
+        START_ADDRESS => 255 
+    )
+    port map(
+        mem_addr => mem_addr, 
+        opcode => opcode,
+        irwe => irwe,
+        sel_consider => mmap_consider,
+        sel_out => mmap_sel_idx
+    );
+
+    -- 2. Peripheral Registers
+    peripherals_inst : entity work.peripherals_regs
+    generic map(
+        BIT_WIDTH => 16,
+        ADDRESS_SIZE => 5
+    )
+    port map(
+        clk => clk,
+        reset => reset,
+        ramwe => ramw,
+        mmap_consider => mmap_consider,
+        out0 => peri_out0_internal,
+        out1 => peri_out1_internal,
+        pdatout => peri_data_out_raw,
+        in0 => in0,
+        in1 => in1,
+        pdatin => ram_data(15 downto 0), -- Low 16 bits
+        mmap_sel => mmap_sel_idx
+    );
+
+    -- 3. Data Multiplexing (RAM vs MMIO)
+    ram_write_effective <= ramw and (not mmap_consider);
+    peri_data_out_padded <= "0000000000000000" & peri_data_out_raw;
+
+    process(mmap_consider, physical_ram_out, peri_data_out_padded)
+    begin
+        if mmap_consider = '1' then
+            ram_read_data_effective <= peri_data_out_padded;
+        else
+            ram_read_data_effective <= physical_ram_out;
+        end if;
+    end process;
+
+    ram_out <= ram_read_data_effective;
+
     process(segsel, cs_out)
     begin
         if cs_out = "00" then
@@ -709,13 +682,9 @@ begin
         end if;
     end process;
 
-    -- Memory RAM/ROM IR multiplexer
     mem_ir_mux: entity work.multiplexer
-     generic map(
-        SEL_NUMBER => 1,
-        BIT_WIDTH => 32
-    )
-     port map(
+    generic map( SEL_NUMBER => 1, BIT_WIDTH => 32 )
+    port map(
         sel => memory_ir_mux_sel,
         input => memory_ir_mux_input_concatenated,
         output => ram_mux_out
@@ -723,31 +692,24 @@ begin
 
     memory_ir_mux_input_concatenated <= romcont & ram_out;
     
-    -- ROM
     ROM_inst: entity work.ROM
-     generic map(
-        DATA_WIDTH => 32
-    )
-     port map(
+    generic map( DATA_WIDTH => 32 )
+    port map(
         address => mem_addr,
         output => romcont
     );
 
-    -- RAM
     RAM_inst: entity work.RAM
-     generic map(
-        DATA_WIDTH => 32
-    )
-     port map(
+    generic map( DATA_WIDTH => 32 )
+    port map(
         address => mem_addr,
         clk => clk,
-        write_enable => ramw,
+        write_enable => ram_write_effective, 
         output_enable => ramw_neg,
         data_input => ram_data,
-        data_output => ram_out
+        data_output => physical_ram_out 
     );
 
     ramw_neg <= not ramw;
-    
 
 end Behavioral;
