@@ -105,10 +105,21 @@ def assert_is_reg(token):
             print("Invalid register! : ", token)
             raise SyntaxError
 
+
+potential_invalid_labels = []
+
 def assert_is_mem(token):
-    if not token.isdigit() and token not in memory_labels.keys():
-        print("Invalid memory address! : ", token, memory_labels.keys())
-        raise SyntaxError
+    global potential_invalid_labels
+
+    immediate = -1
+    try:
+        immediate = int(token, 0)
+    except ValueError:
+        pass
+
+    if not token.isdigit() and immediate == -1 and token not in memory_labels.keys():
+        potential_invalid_labels.append(token)
+        print("Ok")
 
 def assert_is_immediate(token):
     immediate = 0
@@ -173,6 +184,9 @@ def validate_opcode_tokens(tokens):
         print("Index error!")
 
 
+    
+
+
 def assert_variable_declaration_size(tokens):
     if len(tokens) != 3:
         print("Invalid variable declaration! :", tokens)
@@ -209,7 +223,7 @@ def is_label(tokens):
             assert_variable_declaration_size(tokens)
             return True
 
-        if ":" == token[-1]:
+        if ":" == token[-1].rstrip():
             label_name = tokens[-1].lower()
             if len(tokens) > 1:
                 print("Invalid label declaration! :", tokens)
@@ -246,9 +260,10 @@ def main(file_name):
         program_counter = 0 
         for line in lines:
             tokens = tokenise_line(line)
-
+            print(tokens, "ens")
             # Label and variable validation and introduction into memory labels
             if is_label(tokens):
+                print("LABEL: ", tokens)
                 # result[0] - increment    result[1] - is variable
                 result = add_label(tokens, program_counter, memory_counter)
 
@@ -262,6 +277,10 @@ def main(file_name):
                     validate_opcode_tokens(tokens)
                     program_counter += 1
 
+        for potential_invalid in potential_invalid_labels:
+            if potential_invalid not in memory_labels:
+                print("Invalid memory address! : ", potential_invalid,"----", memory_labels.keys())
+                raise SyntaxError
 
         print("-------------")
         with open("rom.hex", "w") as fw:
@@ -305,7 +324,7 @@ def main(file_name):
                                 print("type reg", token)
                             elif type_num == TYPE_MEM:
                                 length += LITERAL_LENGHT
-                                bitstring += to_bin_string(int(token), LITERAL_LENGHT)
+                                bitstring += to_bin_string(int(token, 0), LITERAL_LENGHT)
                                 print("type mem", token)
                             elif type_num == TYPE_IMM:
                                 length += LITERAL_LENGHT
@@ -327,6 +346,19 @@ def main(file_name):
                         
                         print(bitstring, len(bitstring))
                         fw.write(bitstring_to_hex(bitstring)[2:] + '\n')
+
+    with open("rom.hex", "r") as f:
+        i = 0
+        with open("vhdl_rom.hex", "w") as fw:
+            lines = f.readlines()
+            
+            for line in lines:
+                print(line)
+                while len(line) < 9:
+                    line = "0" + line
+                write_line = str(i) + " => x\"" + line.strip() + "\",\n"
+                fw.write(write_line)
+                i += 1
 
     
 
