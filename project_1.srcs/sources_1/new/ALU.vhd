@@ -43,8 +43,8 @@ begin
         reset => reset,
         dividing => do_divide,
         ALU_standby => ALU_standby,
-        divisor => A,
-        dividend => B,
+        divisor => B,
+        dividend => A,
         quotient => div_quotient,
         remainder => div_remainder
     );
@@ -157,7 +157,7 @@ begin
         
     end process;
     -- Division handler
-    process(alu_mode)
+    process(alu_mode, combinational_result, div_remainder, div_quotient)
         begin
             if alu_mode = "1101" then
                 do_divide <= '1';

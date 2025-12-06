@@ -2,20 +2,103 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
 
-entity main is
-    port(clk_extrn, reset : in std_logic;
-        clk_out : out std_logic;
-        -- SSD outputs
-        an : out std_logic_vector(3 downto 0);
-        seg : out std_logic_vector(6 downto 0)
+entity to_simulate_main is
+    port(clk, reset : in std_logic;
 
-       
+        -- DEBUG START
+
+        reg_0_out : out std_logic_vector(15 downto 0);
+
+        dbg_opcode                       : out std_logic_vector(5 downto 0);
+        dbg_romcont                      : out std_logic_vector(31 downto 0);
+        dbg_pcwe                         : out std_logic;
+        dbg_adrsel                       : out std_logic_vector(1 downto 0);
+        dbg_segsel                       : out std_logic;
+        dbg_bssel                        : out std_logic;
+        dbg_arwe                         : out std_logic;
+        dbg_ramw                         : out std_logic;
+        dbg_irwe                         : out std_logic;
+        dbg_drwe                         : out std_logic;
+        dbg_memssel                      : out std_logic_vector(1 downto 0);
+        dbg_rwsel                        : out std_logic_vector(1 downto 0);
+        dbg_rwe                          : out std_logic;
+        dbg_xywe                         : out std_logic;
+        dbg_xsel                         : out std_logic_vector(1 downto 0);
+        dbg_ysel                         : out std_logic_vector(1 downto 0);
+        dbg_alum                         : out std_logic_vector(3 downto 0);
+        dbg_aluwe                        : out std_logic;
+        dbg_pcsel                        : out std_logic_vector(1 downto 0);
+        dbg_cswe                         : out std_logic;
+        dbg_dswe                         : out std_logic;
+        dbg_dsel                         : out std_logic;
+        dbg_sign_f                       : out std_logic;
+        dbg_carry_f                      : out std_logic;
+        dbg_overflow_f                   : out std_logic;
+        dbg_zero_f                       : out std_logic;
+        dbg_bssel_vector                 : out std_logic_vector(0 downto 0);
+        dbg_dsel_vector                  : out std_logic_vector(0 downto 0);
+        dbg_segment_in                   : out std_logic_vector(1 downto 0);
+        dbg_cs_out                       : out std_logic_vector(1 downto 0);
+        dbg_ds_out                       : out std_logic_vector(1 downto 0);
+        dbg_cs_ds_concat                 : out std_logic_vector(3 downto 0);
+        dbg_seg_sel_vec                  : out std_logic_vector(0 downto 0);
+        dbg_seg_mux                      : out std_logic_vector(1 downto 0);
+        dbg_pcsel_in                     : out std_logic_vector(15 downto 0);
+        dbg_pc_out                       : out std_logic_vector(15 downto 0);
+        dbg_adr_mux                      : out std_logic_vector(15 downto 0);
+        dbg_adr_mux_input_concatenated   : out std_logic_vector(63 downto 0);
+        dbg_mem_addr                     : out std_logic_vector(17 downto 0);
+        dbg_ram_mux_out                  : out std_logic_vector(31 downto 0);
+        dbg_dr_out                       : out std_logic_vector(31 downto 0);
+        dbg_dr_low                       : out std_logic_vector(15 downto 0);
+        dbg_dr_high                      : out std_logic_vector(15 downto 0);
+        dbg_dr_low_low                   : out std_logic_vector(7 downto 0);
+        dbg_dr_low_high                  : out std_logic_vector(7 downto 0);
+        dbg_seu_out                      : out std_logic_vector(15 downto 0);
+        dbg_ses_out                      : out std_logic_vector(15 downto 0);
+        dbg_alureg_low                   : out std_logic_vector(15 downto 0);
+        dbg_alureg_high                  : out std_logic_vector(15 downto 0);
+        dbg_alureg_out                   : out std_logic_vector(31 downto 0);
+        dbg_alu_out                      : out std_logic_vector(31 downto 0);
+        dbg_alu_out_low                  : out std_logic_vector(15 downto 0);
+        dbg_ar_in                        : out std_logic_vector(15 downto 0);
+        dbg_ar_out                       : out std_logic_vector(15 downto 0);
+        dbg_pcsel_mux_input_concatenated : out std_logic_vector(63 downto 0);
+        dbg_ir_out                       : out std_logic_vector(31 downto 0);
+        dbg_radrx                        : out std_logic_vector(4 downto 0);
+        dbg_radry                        : out std_logic_vector(4 downto 0);
+        dbg_radrdest                     : out std_logic_vector(4 downto 0);
+        dbg_dest                         : out std_logic_vector(4 downto 0);
+        dbg_dest_mux_input_concatenated  : out std_logic_vector(9 downto 0);
+        dbg_x_alu_a                      : out std_logic_vector(15 downto 0);
+        dbg_y_alu_b                      : out std_logic_vector(15 downto 0);
+        dbg_alusby                       : out std_logic;
+        dbg_x_mux_input_concatenated     : out std_logic_vector(63 downto 0);
+        dbg_y_mux_input_concatenated     : out std_logic_vector(63 downto 0);
+        dbg_xy_xout                      : out std_logic_vector(15 downto 0);
+        dbg_xy_yout                      : out std_logic_vector(15 downto 0);
+        dbg_xy_out                       : out std_logic_vector(31 downto 0);
+        dbg_xy_in                        : out std_logic_vector(31 downto 0);
+        dbg_bsmux                        : out std_logic_vector(15 downto 0);
+        dbg_bs_mux_input_concatenated    : out std_logic_vector(31 downto 0);
+        dbg_ram_data                     : out std_logic_vector(31 downto 0);
+        dbg_ramw_neg                     : out std_logic;
+        dbg_ram_out                      : out std_logic_vector(31 downto 0);
+        dbg_holder_x                     : out std_logic_vector(15 downto 0);
+        dbg_holder_y                     : out std_logic_vector(15 downto 0);
+        dbg_memsel_mux_input_concatenated: out std_logic_vector(63 downto 0);
+        dbg_memsel_out                   : out std_logic_vector(15 downto 0);
+        dbg_write_mux_input_concatenated : out std_logic_vector(63 downto 0);
+        dbg_write_mux_out                : out std_logic_vector(15 downto 0);
+        dbg_memory_ir_mux_input_concatenated : out std_logic_vector(63 downto 0);
+        dbg_memory_ir_mux_sel            : out std_logic_vector(0 downto 0)
+        
+        -- DEBUG END
         );
-end main;
+end to_simulate_main;
 
-architecture Behavioral of main is
-    -- Internal clock
-    signal clk : std_logic;
+architecture Behavioral of to_simulate_main is
+
 
     signal reg_0_internal : std_logic_vector(15 downto 0);
 
@@ -167,26 +250,94 @@ architecture Behavioral of main is
     signal memory_ir_mux_sel : std_logic_vector(0 downto 0);
 begin
 
-    -- SSD module
-    ssd_driver: entity work.Switchtossd
-     port map(
-        inputvec => reg_0_internal,
-        clk => clk_extrn, -- This does not need clock divider
-        reset => reset,
-        an => an,
-        seg => seg
-    );
 
-    -- Clock divider module
-    clockdivider_inst: entity work.clockdivider
-     port map(
-        clk_in => clk_extrn,
-        reset => reset,
-        clk_out => clk_out
-    );
 
-    clk <= clk_extrn;
-    
+    reg_0_out <= reg_0_internal;
+    -- DEBUG START
+    dbg_opcode                       <= opcode;
+    dbg_romcont                      <= romcont;
+    dbg_pcwe                         <= pcwe;
+    dbg_adrsel                       <= adrsel;
+    dbg_segsel                       <= segsel;
+    dbg_bssel                        <= bssel;
+    dbg_arwe                         <= arwe;
+    dbg_ramw                         <= ramw;
+    dbg_irwe                         <= irwe;
+    dbg_drwe                         <= drwe;
+    dbg_memssel                      <= memssel;
+    dbg_rwsel                        <= rwsel;
+    dbg_rwe                          <= rwe;
+    dbg_xywe                         <= xywe;
+    dbg_xsel                         <= xsel;
+    dbg_ysel                         <= ysel;
+    dbg_alum                         <= alum;
+    dbg_aluwe                        <= aluwe;
+    dbg_pcsel                        <= pcsel;
+    dbg_cswe                         <= cswe;
+    dbg_dswe                         <= dswe;
+    dbg_dsel                         <= dsel;
+    dbg_sign_f                       <= sign_f;
+    dbg_carry_f                      <= carry_f;
+    dbg_overflow_f                   <= overflow_f;
+    dbg_zero_f                       <= zero_f;
+    dbg_bssel_vector                 <= bssel_vector;
+    dbg_dsel_vector                  <= dsel_vector;
+    dbg_segment_in                   <= segment_in;
+    dbg_cs_out                       <= cs_out;
+    dbg_ds_out                       <= ds_out;
+    dbg_cs_ds_concat                 <= cs_ds_concat;
+    dbg_seg_sel_vec                  <= seg_sel_vec;
+    dbg_seg_mux                      <= seg_mux;
+    dbg_pcsel_in                     <= pcsel_in;
+    dbg_pc_out                       <= pc_out;
+    dbg_adr_mux                      <= adr_mux;
+    dbg_adr_mux_input_concatenated   <= adr_mux_input_concatenated;
+    dbg_mem_addr                     <= mem_addr;
+    dbg_ram_mux_out                  <= ram_mux_out;
+    dbg_dr_out                       <= dr_out;
+    dbg_dr_low                       <= dr_low;
+    dbg_dr_high                      <= dr_high;
+    dbg_dr_low_low                   <= dr_low_low;
+    dbg_dr_low_high                  <= dr_low_high;
+    dbg_seu_out                      <= seu_out;
+    dbg_ses_out                      <= ses_out;
+    dbg_alureg_low                   <= alureg_low;
+    dbg_alureg_high                  <= alureg_high;
+    dbg_alureg_out                   <= alureg_out;
+    dbg_alu_out                      <= alu_out;
+    dbg_alu_out_low                  <= alu_out_low;
+    dbg_ar_in                        <= ar_in;
+    dbg_ar_out                       <= ar_out;
+    dbg_pcsel_mux_input_concatenated <= pcsel_mux_input_concatenated;
+    dbg_ir_out                       <= ir_out;
+    dbg_radrx                        <= radrx;
+    dbg_radry                        <= radry;
+    dbg_radrdest                     <= radrdest;
+    dbg_dest                         <= dest;
+    dbg_dest_mux_input_concatenated  <= dest_mux_input_concatenated;
+    dbg_x_alu_a                      <= x_alu_a;
+    dbg_y_alu_b                      <= y_alu_b;
+    dbg_alusby                       <= alusby;
+    dbg_x_mux_input_concatenated     <= x_mux_input_concatenated;
+    dbg_y_mux_input_concatenated     <= y_mux_input_concatenated;
+    dbg_xy_xout                      <= xy_xout;
+    dbg_xy_yout                      <= xy_yout;
+    dbg_xy_out                       <= xy_out;
+    dbg_xy_in                        <= xy_in;
+    dbg_bsmux                        <= bsmux;
+    dbg_bs_mux_input_concatenated    <= bs_mux_input_concatenated;
+    dbg_ram_data                     <= ram_data;
+    dbg_ramw_neg                     <= ramw_neg;
+    dbg_ram_out                      <= ram_out;
+    dbg_holder_x                     <= holder_x;
+    dbg_holder_y                     <= holder_y;
+    dbg_memsel_mux_input_concatenated<= memsel_mux_input_concatenated;
+    dbg_memsel_out                   <= memsel_out;
+    dbg_write_mux_input_concatenated <= write_mux_input_concatenated;
+    dbg_write_mux_out                <= write_mux_out;
+    dbg_memory_ir_mux_input_concatenated <= memory_ir_mux_input_concatenated;
+    dbg_memory_ir_mux_sel            <= memory_ir_mux_sel;
+    -- DEBUG END
     segment_in <= alureg_low(1 downto 0);
 
     -- Data segment register

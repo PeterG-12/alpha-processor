@@ -77,6 +77,6 @@ begin
     quotient <= holder_register(BIT_WIDTH -1 downto 0);
     remainder <= holder_register(2*BIT_WIDTH -1 downto BIT_WIDTH);
 
-    ALU_standby <= (not is_count_zero) or ((not dividing_delay) and dividing);
+    ALU_standby <= '1' when ((dividing = '1' and dividing_delay = '0') or internal_count > 0) else '0';
 
 end Behavioral;

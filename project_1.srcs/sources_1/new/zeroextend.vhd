@@ -20,7 +20,7 @@ begin
         report "Output width must be greater than or equal to input width."
         severity ERROR;
 
-    outputs <= (others => '0');
+    outputs(BIT_WIDTH_OUT - 1 downto BIT_WIDTH_IN) <= (others => '0');
     outputs(BIT_WIDTH_IN - 1 downto 0) <= inputs;
 
 end Behavioral;
