@@ -165,6 +165,12 @@ architecture Behavioral of main is
     -- Memory RAM/ROM IR multiplexer
     signal memory_ir_mux_input_concatenated : std_logic_vector(63 downto 0);
     signal memory_ir_mux_sel : std_logic_vector(0 downto 0);
+
+    -- Peripheral output dmux outputs held in a single vector
+    signal out_peri_dmux_out_vector : std_logic_vector(31 downto 0);
+    signal mmap_consider_vector : std_logic_vector(0 downto 0);
+
+
 begin
 
     -- SSD module
