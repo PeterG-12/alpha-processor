@@ -7,14 +7,16 @@ entity FSM is
     generic(OPCODE_WIDTH : integer := 6;
         COUNT_BIT_WIDTH : integer := 3;
         JUMPTYPES_WIDTH : integer := 3;
-        DATA_WIDTH : integer := 30;
+        DATA_WIDTH : integer := 33;
         ADDRESS_SIZE : integer := 9);
     port(opcode : in std_logic_vector(OPCODE_WIDTH - 1 downto 0);
-        clk, reset, suspend : in std_logic;
+        clk, reset, suspend, interrupt : in std_logic;
         -- flags from ALU
         sign_f, overflow_f, zero_f : in std_logic;
     -- Full list of control, select and write-enable signals controlling
     -- the entire CPU flow logic
+        iretsel : out std_logic;
+        pciwe   : out std_logic;
         pcwe    : out std_logic;
         adrsel  : out std_logic_vector(1 downto 0);
         segsel  : out std_logic;
@@ -73,7 +75,7 @@ architecture Structural of FSM is
 
     component FSM_ROM is
         generic(ADDRESS_SIZE : integer := 9;
-                DATA_WIDTH : integer := 30);
+                DATA_WIDTH : integer := 33);
         port(address : in std_logic_vector(ADDRESS_SIZE - 1 downto 0);
             data_output : out std_logic_vector(DATA_WIDTH - 1 downto 0)
         );
@@ -88,7 +90,8 @@ architecture Structural of FSM is
             );
     end component;
 
-    signal end_of_cycle_signal : std_logic;
+    signal ifwe : std_logic;
+    signal end_of_cycle_signal : std_logic; -- ireset
     signal ROM_address : std_logic_vector(ADDRESS_SIZE - 1 downto 0);
 
     signal is_jump : std_logic;
@@ -104,7 +107,21 @@ architecture Structural of FSM is
     signal consider_jump_vector : std_logic_vector(0 downto 0);
     signal jump_consider_mux_input_concatenated : std_logic_vector(3 downto 0);
 
+    -- Interrupt helpers
+    signal intsel : std_logic;
+
 begin
+
+    interrupt_flag_module_inst: entity work.interrupt_flag_module
+     port map(
+        ireset => end_of_cycle_signal,
+        interrupt => interrupt,
+        ifwe => ifwe,
+        reset => reset,
+        clk => clk,
+        opcode => opcode,
+        intsel => intsel
+    );
 
     counter : FSM_counter
     generic map(COUNT_BIT_WIDTH => COUNT_BIT_WIDTH)
@@ -200,7 +217,18 @@ begin
     dswe    <= ROM_data(DATA_WIDTH - 29);
     dsel    <= ROM_data(DATA_WIDTH - 30);
 
+    ifwe    <= ROM_data(DATA_WIDTH - 31);
+    pciwe   <= ROM_data(DATA_WIDTH - 32);
+    iretsel <= ROM_data(DATA_WIDTH - 33);
 
-    ROM_address <= opcode & output_count;
+
+    process(intsel, opcode, output_count)
+        begin
+        if intsel = '0' then 
+            ROM_address <= opcode & output_count;
+        else
+            ROM_address <= "111111111";
+        end if;
+    end process;
 
 end Structural;

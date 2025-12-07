@@ -10,8 +10,9 @@ entity main is
         seg : out std_logic_vector(6 downto 0);
         --out1 : out std_logic_vector(15 downto 0);
         out0 : out std_logic_vector(15 downto 0);
-        in0 : in std_logic_vector(15 downto 0)
+        in0 : in std_logic_vector(15 downto 0);
         --in1 : in std_logic_vector(15 downto 0)
+        interrupt : in std_logic
         );
 end main;
 
@@ -30,6 +31,8 @@ architecture Behavioral of main is
     -- ROM address and content (address has 8 bits here)
     signal romcont : std_logic_vector(31 downto 0);
 
+    signal iretsel : std_logic := '0';
+    signal pciwe   : std_logic := '0';
     signal pcwe    : std_logic := '0';
     signal adrsel  : std_logic_vector(1 downto 0) := "00";
     signal segsel  : std_logic := '0';
@@ -116,7 +119,8 @@ architecture Behavioral of main is
 
 
     -- PCSEL multiplexer helper
-    signal pcsel_mux_input_concatenated : std_logic_vector(63 downto 0);
+    signal pcsel_mux_sel_concetaned : std_logic_vector(2 downto 0); -- combining pcsel and iretsel
+    signal pcsel_mux_input_concatenated : std_logic_vector(127 downto 0);
 
     -- Instruction register
     signal ir_out : std_logic_vector(31 downto 0);
@@ -192,7 +196,16 @@ architecture Behavioral of main is
     signal pr_dataout : std_logic_vector(15 downto 0);
 
 
+    -- Interrupt buffer
+    signal interrupt_buffer_out : std_logic;
+
+    -- Interrupt store PCI
+    signal pciout : std_logic_vector(15 downto 0);
+    constant INTERRUPT_JUMP_ADDR : std_logic_vector(15 downto 0) := "0000000011000000";
+
 begin
+
+    in1 <= (others => '0');
 
     -- SSD module
     ssd_driver: entity work.Switchtossd
@@ -293,16 +306,19 @@ begin
         OPCODE_WIDTH => 6,
         COUNT_BIT_WIDTH => 3,
         JUMPTYPES_WIDTH => 3,
-        DATA_WIDTH => 30,
+        DATA_WIDTH => 33,
         ADDRESS_SIZE => 9
     )
      port map(
+        interrupt => interrupt_buffer_out,
         opcode => opcode,
         clk => clk,
         reset => reset,
         sign_f => sign_f,
         overflow_f => overflow_f,
         zero_f => zero_f,
+        iretsel => iretsel,
+        pciwe => pciwe,
         pcwe => pcwe,
         adrsel => adrsel,
         segsel => segsel,
@@ -401,15 +417,16 @@ begin
     -- Program counter multiplexer
     pcsel_mux: entity work.multiplexer
      generic map(
-        SEL_NUMBER => 2,
+        SEL_NUMBER => 3,
         BIT_WIDTH => 16
     )
     port map(
-        sel => pcsel,
+        sel => pcsel_mux_sel_concetaned,
         input => pcsel_mux_input_concatenated,
         output => pcsel_in
     );
-    pcsel_mux_input_concatenated <= ar_out & pc_out & alureg_low & alu_out_low;
+    pcsel_mux_sel_concetaned <= iretsel & pcsel;
+    pcsel_mux_input_concatenated <= "0000000000000000" & "0000000000000000" & pciout & INTERRUPT_JUMP_ADDR & ar_out & pc_out & alureg_low & alu_out_low;
 
     -- Instruction register
     instr_reg: entity work.custom_register
@@ -692,5 +709,27 @@ begin
         mmap_sel => mmap_sel
     );
     
+
+    -- Interrupt buffer
+    interrupt_buffer_inst: entity work.interrupt_buffer
+     port map(
+        clk => clk,
+        interrupt => clk_out,
+        reset => reset,
+        pciwe => pciwe,
+        intbuf_out => interrupt_buffer_out
+    );
+
+    interrupt_program_counter_store: entity work.custom_register
+     generic map(
+        BIT_WIDTH => 16
+    )
+     port map(
+        input => pc_out,
+        write_enable => pciwe,
+        clk => clk,
+        reset => reset,
+        output => pciout
+    );
 
 end Behavioral;

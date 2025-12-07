@@ -24,10 +24,8 @@ begin
         if internal_count = FREQ then
             clk_out <= '1';
             internal_count <= 0;
-        elsif internal_count = FREQ/2 then
-            clk_out <= '0';
-            internal_count <= internal_count + 1;
         else
+            clk_out <= '0';
             internal_count <= internal_count + 1;
         end if;
         
