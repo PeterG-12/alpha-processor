@@ -14,6 +14,7 @@ signal current_state, next_state : state_type := Empty;
 begin
     process(interrupt, pciwe, current_state)
     begin
+        next_state <= current_state;
         case current_state is
             when Empty => intbuf_out <= '0';
                         if interrupt = '1' then

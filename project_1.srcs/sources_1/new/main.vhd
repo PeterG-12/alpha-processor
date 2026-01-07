@@ -1,10 +1,15 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
+    
+-- Project: Custom 16-bit RISC Processor
+-- Author: Péter Gál
+-- Description: Features 6-bit Opcode, MMIO, and Segmented Memory, Interrupt timer
+-- Target: Xilinx Artix-7 (Basys 3 / Nexys A7)
 
+  
 entity main is
     port(clk_extrn, reset : in std_logic;
-        --clk_out : out std_logic;
         -- SSD outputs
         an : out std_logic_vector(3 downto 0);
         seg : out std_logic_vector(6 downto 0);
@@ -12,7 +17,8 @@ entity main is
         out0 : out std_logic_vector(15 downto 0);
         in0 : in std_logic_vector(15 downto 0);
         --in1 : in std_logic_vector(15 downto 0)
-        interrupt : in std_logic
+        interrupt : in std_logic;
+        ps_data, ps_clock : in std_logic
         );
 end main;
 
@@ -202,7 +208,8 @@ architecture Behavioral of main is
     -- Interrupt store PCI
     signal pciout : std_logic_vector(15 downto 0);
     constant INTERRUPT_JUMP_ADDR : std_logic_vector(15 downto 0) := "0000000011000000";
-
+    signal nullbuf : std_logic_vector(15 downto 0);
+    
 begin
 
     in1 <= (others => '0');
@@ -215,14 +222,6 @@ begin
         reset => reset,
         an => an,
         seg => seg
-    );
-
-    -- Clock divider module
-    clockdivider_inst: entity work.clockdivider
-     port map(
-        clk_in => clk_extrn,
-        reset => reset,
-        clk_out => clk_out
     );
 
     clk <= clk_extrn;

@@ -135,9 +135,12 @@ set_property -dict { PACKAGE_PIN T18   IOSTANDARD LVCMOS33 } [get_ports interrup
 
 
 ##USB HID (PS/2)
-#set_property -dict { PACKAGE_PIN C17   IOSTANDARD LVCMOS33   PULLUP true } [get_ports PS2Clk]
-#set_property -dict { PACKAGE_PIN B17   IOSTANDARD LVCMOS33   PULLUP true } [get_ports PS2Data]
-
+set_property PACKAGE_PIN C17 [get_ports ps_clock]						
+set_property IOSTANDARD LVCMOS33 [get_ports ps_clock]
+set_property PULLUP true [get_ports ps_clock]
+set_property PACKAGE_PIN B17 [get_ports ps_data]					
+set_property IOSTANDARD LVCMOS33 [get_ports ps_data]	
+set_property PULLUP true [get_ports ps_data]
 
 ##Quad SPI Flash
 ##Note that CCLK_0 cannot be placed in 7 series devices. You can access it using the
