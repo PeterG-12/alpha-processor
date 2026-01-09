@@ -296,5 +296,6 @@ begin
 
     interrupt_program_counter_store: entity work.custom_register generic map(BIT_WIDTH => 16)
     port map(input => pc_out, write_enable => pciwe, clk => clk, reset => reset, output => pciout);
-
+    
+    segment_in <= alureg_low(1 downto 0);
 end Behavioral;

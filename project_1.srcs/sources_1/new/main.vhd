@@ -15,16 +15,21 @@ entity main is
         seg : out std_logic_vector(6 downto 0);
         --out1 : out std_logic_vector(15 downto 0);
         out0 : out std_logic_vector(15 downto 0);
-        in0 : in std_logic_vector(15 downto 0);
+        JB : inout std_logic_vector(7 downto 0);
+        --in0 : in std_logic_vector(15 downto 0);
         --in1 : in std_logic_vector(15 downto 0)
         interrupt : in std_logic;
-        ps_data, ps_clock : in std_logic
+        ps_data, ps_clock : in std_logic;
+        dht_pin : inout std_logic;
+        dht_start_signal : in std_logic
         );
 end main;
 
 architecture Behavioral of main is
     signal clk_out : std_logic;
     signal out1 : std_logic_vector(15 downto 0);
+    signal in0 : std_logic_vector(15 downto 0);
+
     signal in1 : std_logic_vector(15 downto 0);
 
     -- Internal clock
@@ -210,9 +215,38 @@ architecture Behavioral of main is
     constant INTERRUPT_JUMP_ADDR : std_logic_vector(15 downto 0) := "0000000011000000";
     signal nullbuf : std_logic_vector(15 downto 0);
     
+
+    -- GPIO signals
+    signal gpio_driver_signal : std_logic_vector(15 downto 0);
+    signal gpio_driver_signal_mode : std_logic_vector(7 downto 0);
+    signal gpio_driver_signal_data : std_logic_vector(7 downto 0);
+
+    signal gpio_driver_signal_read_data_1 : std_logic_vector(7 downto 0);
+    signal gpio_driver_signal_read_data_2 : std_logic_vector(7 downto 0);
+    signal gpio_driver_signal_read_data_aggregated : std_logic_vector(15 downto 0);
+    
+
+    signal dummy : std_logic_vector(15 downto 0);
+
 begin
 
-    in1 <= (others => '0');
+    -- Timer
+    clockdivider_inst: entity work.clockdivider
+     port map(
+        clk_in => clk,
+        reset => reset,
+        clk_out => clk_out
+    );
+
+
+    dhtreceiver_inst: entity work.dhtreceiver
+     port map(
+        clk => clk,
+        reset => reset,
+        start_signal => dht_start_signal,
+        output_data => in0,
+        dht_pin => dht_pin
+    );
 
     -- SSD module
     ssd_driver: entity work.Switchtossd
@@ -700,7 +734,7 @@ begin
         ramwe => ramw,
         mmap_consider => mmap_consider,
         out0 => out0,
-        out1 => out1,
+        out1 => gpio_driver_signal,
         pdatout => pr_dataout,
         in0 => in0,
         in1 => in1,
@@ -729,6 +763,30 @@ begin
         clk => clk,
         reset => reset,
         output => pciout
+    );
+
+
+    -- GPIO
+    gpio_driver_signal_mode <= gpio_driver_signal(15 downto 8);
+    gpio_driver_signal_data <= gpio_driver_signal(7 downto 0);
+
+
+    gpio_driver_signal_read_data_2 <= ((others => '1') ); -- temporary could be used for a second gpio set
+    gpio_driver_signal_read_data_aggregated <= gpio_driver_signal_read_data_2 & gpio_driver_signal_read_data_1;
+    
+    in1 <= gpio_driver_signal_read_data_aggregated;
+    
+    gpio_driver_inst: entity work.gpio_driver
+     generic map(
+        PORTS => 8
+    )
+     port map(
+        clk => clk,
+        reset => reset,
+        gpio_ports => JB,
+        gpio_output_mode => gpio_driver_signal_mode,
+        gpio_write_data => gpio_driver_signal_data,
+        gpio_read_data => gpio_driver_signal_read_data_1
     );
 
 end Behavioral;
