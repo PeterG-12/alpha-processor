@@ -1,6 +1,6 @@
 import sys
 
-opcodes = {'NOOP': '000000', 'JE': '000001', 'JNE': '000010', 'JL': '000011', 'JG': '000100', 'JGE': '000101', 'JLE': '000110', 'MOV': '000111', 'LDS': '001000', 'LDU': '001001', 'LDW': '001010', 'LDI': '001011', 'STOREW': '001100', 'STOREB': '001101', 'JUMP': '001110', 'ADD': '001111', 'SUB': '010000', 'AND': '010001', 'OR': '010010', 'XOR': '010011', 'SHL': '010100', 'SHR': '010101', 'SAR': '010110', 'ROL': '010111', 'ROR': '011000', 'NEG': '011001', 'MUL': '011010', 'IMUL': '011011', 'DIV': '011100', 'IDIV': '011101'}
+opcodes = {'NOOP': '000000', 'JE': '000001', 'JNE': '000010', 'JL': '000011', 'JG': '000100', 'JGE': '000101', 'JLE': '000110', 'MOV': '000111', 'LDS': '001000', 'LDU': '001001', 'LDW': '001010', 'LDI': '001011', 'STOREW': '001100', 'STOREB': '001101', 'JUMP': '001110', 'ADD': '001111', 'SUB': '010000', 'AND': '010001', 'OR': '010010', 'XOR': '010011', 'SHL': '010100', 'SHR': '010101', 'SAR': '010110', 'ROL': '010111', 'ROR': '011000', 'NEG': '011001', 'MUL': '011010', 'IMUL': '011011', 'DIV': '011100', 'IDIV': '011101', 'SWDS': '011110', 'SWCS': '011111', 'RLDS': '100000', 'RLDU': '100001', 'RLDW': '100010', 'RSTOREW': '100011', 'RSTOREB': '100100', 'ISET': '100101', 'ICLR': '100110', 'IRET': '100111'}
 
 
 TYPE_REG = 1
@@ -53,7 +53,18 @@ operations_dict = {
 
     # Division
     'DIV': [TYPE_REG, TYPE_REG, TYPE_REG, TYPE_PAD],
-    'IDIV': [TYPE_REG, TYPE_REG, TYPE_REG, TYPE_PAD]
+    'IDIV': [TYPE_REG, TYPE_REG, TYPE_REG, TYPE_PAD],
+
+    # Register memory addressing
+    'RLDS': [TYPE_REG, TYPE_REG, TYPE_PAD],
+    'RLDU': [TYPE_REG, TYPE_REG, TYPE_PAD],
+    'RLDW': [TYPE_REG, TYPE_REG, TYPE_PAD],
+    'RSTOREW': [TYPE_REG, TYPE_REG, TYPE_PAD],
+    'RSTOREB': [TYPE_REG, TYPE_REG, TYPE_PAD],
+
+    'ISET' : [TYPE_PAD],
+    'ICLR' : [TYPE_PAD],
+    'IRET' : [TYPE_PAD]
 }
 
 def bitstring_to_hex(bitstring: str) -> str:
@@ -242,8 +253,12 @@ REGCODE_LENGTH = 5
 LITERAL_LENGHT = 16
 OPERATION_SIZE = 32
 
+
+binstring_array = []
+
 def main(file_name):
     global memory_labels
+    global binstring_array
     ## Check whether file exitst
     try:
         with open(file_name, 'r') as f:
@@ -345,6 +360,7 @@ def main(file_name):
                                 bitstring += '0'
                         
                         print(bitstring, len(bitstring))
+                        binstring_array.append(bitstring)
                         fw.write(bitstring_to_hex(bitstring)[2:] + '\n')
 
     with open("rom.hex", "r") as f:
@@ -353,7 +369,7 @@ def main(file_name):
             lines = f.readlines()
             
             for line in lines:
-                print(line)
+                #print(line)
                 while len(line) < 9:
                     line = "0" + line
                 write_line = str(i) + " => x\"" + line.strip() + "\",\n"
@@ -369,3 +385,6 @@ if __name__ == "__main__":
         main(sys.argv[1])
     else:
         print("Provide the code file name")
+
+    for binstring in binstring_array:
+        print(binstring)
