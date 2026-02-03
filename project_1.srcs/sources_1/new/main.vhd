@@ -14,14 +14,16 @@ entity main is
         an : out std_logic_vector(3 downto 0);
         seg : out std_logic_vector(6 downto 0);
         --out1 : out std_logic_vector(15 downto 0);
-        out0 : out std_logic_vector(15 downto 0);
+        --out0 : out std_logic_vector(15 downto 0);
         JB : inout std_logic_vector(7 downto 0);
         --in0 : in std_logic_vector(15 downto 0);
         --in1 : in std_logic_vector(15 downto 0)
         interrupt : in std_logic;
-        ps_data, ps_clock : in std_logic;
-        dht_pin : inout std_logic;
-        dht_start_signal : in std_logic
+        --dht_pin : inout std_logic;
+        --dht_start_signal : in std_logic;
+        miso : in std_logic;
+        mosi, sck : out std_logic;
+        cs_vector : out std_logic_vector(4 downto 0);
         );
 end main;
 
@@ -225,27 +227,22 @@ architecture Behavioral of main is
     signal gpio_driver_signal_read_data_2 : std_logic_vector(7 downto 0);
     signal gpio_driver_signal_read_data_aggregated : std_logic_vector(15 downto 0);
     
+    -- SPI driver signals
+    signal start_transfer : std_logic := '0';
+    signal register_address : std_logic := '0';
+    signal spi_address : std_logic_vector(2 downto 0) := "000";
+    signal spi_data : std_logic_vector(7 downto 0) := "00000000";
 
-    signal dummy : std_logic_vector(15 downto 0);
+    signal out0 : std_logic_vector(15 downto 0) := "0000000000000000";
 
 begin
 
     -- Timer
-    clockdivider_inst: entity work.clockdivider
+    timer_instance: entity work.clockdivider
      port map(
         clk_in => clk,
         reset => reset,
         clk_out => clk_out
-    );
-
-
-    dhtreceiver_inst: entity work.dhtreceiver
-     port map(
-        clk => clk,
-        reset => reset,
-        start_signal => dht_start_signal,
-        output_data => in0,
-        dht_pin => dht_pin
     );
 
     -- SSD module
@@ -459,7 +456,7 @@ begin
         output => pcsel_in
     );
     pcsel_mux_sel_concetaned <= iretsel & pcsel;
-    pcsel_mux_input_concatenated <= "0000000000000000" & "0000000000000000" & pciout & INTERRUPT_JUMP_ADDR & ar_out & pc_out & alureg_low & alu_out_low;
+    pcsel_mux_input_concatenated <= "0000000000000000" & INTERRUPT_JUMP_ADDR & pciout & INTERRUPT_JUMP_ADDR & ar_out & pc_out & alureg_low & alu_out_low;
 
     -- Instruction register
     instr_reg: entity work.custom_register
@@ -771,7 +768,7 @@ begin
     gpio_driver_signal_data <= gpio_driver_signal(7 downto 0);
 
 
-    gpio_driver_signal_read_data_2 <= ((others => '1') ); -- temporary could be used for a second gpio set
+    --gpio_driver_signal_read_data_2 <= ((others => '1') ); -- temporary could be used for a second gpio set
     gpio_driver_signal_read_data_aggregated <= gpio_driver_signal_read_data_2 & gpio_driver_signal_read_data_1;
     
     in1 <= gpio_driver_signal_read_data_aggregated;
@@ -787,6 +784,30 @@ begin
         gpio_output_mode => gpio_driver_signal_mode,
         gpio_write_data => gpio_driver_signal_data,
         gpio_read_data => gpio_driver_signal_read_data_1
+    );
+
+
+    register_address <= out0(12);
+    start_transfer <= out0(11);
+    spi_address <= out0(10 downto 8);
+    spi_data <= out0(7 downto 0);
+
+    spidriver_inst: entity work.spidriver
+     generic map(
+        CLK_IDLE => '0'
+    )
+     port map(
+        clk => clk,
+        reset => reset,
+        start_transfer => start_transfer,
+        register_address => register_address,
+        data_in => spi_data,
+        data_out => gpio_driver_signal_read_data_2,
+        miso => miso,
+        mosi => mosi,
+        sck => sck,
+        cs_vector => cs_vector,
+        addr => spi_address
     );
 
 end Behavioral;

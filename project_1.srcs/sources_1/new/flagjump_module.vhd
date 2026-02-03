@@ -6,7 +6,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity flagjump_module is
     -- Defines the maximum number of jump types
     generic(JUMPTYPES_WIDTH : integer := 3);
-    port(jump_type_bits : in std_logic_vector(JUMPTYPES_WIDTH - 1 downto 0);
+    -- To fix 'choice subtype is not locally static'
+    port(jump_type_bits : in std_logic_vector(2 downto 0);
         -- flags
         sign_f, overflow_f, zero_f : in std_logic;
         output_jump : out std_logic
@@ -36,6 +37,7 @@ begin
     process(jump_type_bits, sign_f, overflow_f, zero_f, sign_xor_overflow, sign_xnor_overflow, zero_or_xor, zero_negated_and_xnor, zero_negated)
     begin
         -- if JUMPTYPES_WIDTH is not 3 this part needs to be manually edited to fit new number of jump types
+        -- to fix: 'choice subtype is not locally static' when jump_type_bits defined with generic
         case jump_type_bits is
             when "001" => output_jump <= zero_f;
             when "010" => output_jump <= zero_negated;

@@ -41,6 +41,7 @@ begin
                     when "01" => current_digit_hex <= inputvec(7 downto 4);
                     when "10" => current_digit_hex <= inputvec(11 downto 8);
                     when "11" => current_digit_hex <= inputvec(15 downto 12);
+                    when others => current_digit_hex <= (others => '1');
                 end case;
             end process;
             process(digit_select)
@@ -50,6 +51,7 @@ begin
                     when "01" => an <= "1101";
                     when "10" => an <= "1011";
                     when "11" => an <= "0111";
+                    when others => an <= (others => '1');
                 end case;
             end process;
             cdigit_int <= to_integer(unsigned(current_digit_hex));

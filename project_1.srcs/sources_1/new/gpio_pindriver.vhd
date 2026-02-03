@@ -10,7 +10,7 @@ end gpio_pindriver;
 
 architecture Behavioral of gpio_pindriver is
 
-signal debouncer_1, debouncer_2 : std_logic := '0';
+signal sync_1, sync_2 : std_logic := '0';
 
 begin
     
@@ -20,13 +20,13 @@ begin
     process(clk, reset)
     begin
         if reset ='1' then
-            debouncer_1 <= gpio_interface;
-            debouncer_2 <= '0';
+            sync_1 <= gpio_interface;
+            sync_2 <= '0';
         elsif rising_edge(clk) then
 
-            debouncer_1 <= gpio_interface;
-            debouncer_2 <= debouncer_1;
-            gpio_read_data <= debouncer_2;
+            sync_1 <= gpio_interface;
+            sync_2 <= sync_1;
+            gpio_read_data <= sync_2;
 
             
         end if;
