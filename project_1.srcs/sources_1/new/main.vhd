@@ -1,13 +1,15 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
-    
+
 -- Project: Custom 16-bit RISC Processor
 -- Author: Péter Gál
 -- Description: Features 6-bit Opcode, MMIO, and Segmented Memory, Interrupt timer
 -- Target: Xilinx Artix-7 (Basys 3 / Nexys A7)
 
-  
+
+
+
 entity main is
     port(clk_extrn, reset : in std_logic;
         -- SSD outputs
@@ -23,7 +25,7 @@ entity main is
         --dht_start_signal : in std_logic;
         miso : in std_logic;
         mosi, sck : out std_logic;
-        cs_vector : out std_logic_vector(4 downto 0);
+        cs_vector : out std_logic_vector(4 downto 0)
         );
 end main;
 
@@ -119,7 +121,7 @@ architecture Behavioral of main is
     signal ses_out : std_logic_vector(15 downto 0);
 
     -- ALU helpers
-    
+
     signal alureg_low : std_logic_vector(15 downto 0);
     signal alureg_high : std_logic_vector(15 downto 0);
     signal alureg_out : std_logic_vector(31 downto 0);
@@ -214,9 +216,9 @@ architecture Behavioral of main is
 
     -- Interrupt store PCI
     signal pciout : std_logic_vector(15 downto 0);
-    constant INTERRUPT_JUMP_ADDR : std_logic_vector(15 downto 0) := "0000000011000000";
+    signal interrupt_address : std_logic_vector(15 downto 0) := "0000000011000000";
     signal nullbuf : std_logic_vector(15 downto 0);
-    
+
 
     -- GPIO signals
     signal gpio_driver_signal : std_logic_vector(15 downto 0);
@@ -226,7 +228,7 @@ architecture Behavioral of main is
     signal gpio_driver_signal_read_data_1 : std_logic_vector(7 downto 0);
     signal gpio_driver_signal_read_data_2 : std_logic_vector(7 downto 0);
     signal gpio_driver_signal_read_data_aggregated : std_logic_vector(15 downto 0);
-    
+
     -- SPI driver signals
     signal start_transfer : std_logic := '0';
     signal register_address : std_logic := '0';
@@ -256,7 +258,7 @@ begin
     );
 
     clk <= clk_extrn;
-    
+
     segment_in <= alureg_low(1 downto 0);
 
     -- Data segment register
@@ -286,19 +288,16 @@ begin
     );
 
     -- Segment selector multiplexer
-    segment_selector_mux : entity work.multiplexer
-    generic map(
-        SEL_NUMBER => 1,
-        BIT_WIDTH => 2
-    )
-     port map(
-        sel => seg_sel_vec,
-        input => cs_ds_concat,
-        output => seg_mux
+    segment_selector_generic_mux : entity work.generic_mux
+    port map(
+        mux_sel => std_logic_vector'(0 => segsel),
+        mux_input => (
+            1 => cs_out,
+            0 => ds_out
+        ),
+        mux_output => seg_mux -- routes the segment bits to the RAM address
     );
 
-    cs_ds_concat <= cs_out & ds_out;
-    seg_sel_vec <= (others => segsel);
 
     -- Program counter register
     pc_reg : entity work.custom_register
@@ -313,19 +312,18 @@ begin
         output => pc_out
     );
 
-    -- Address selector multiplexer
-    adr_sel_mux: entity work.multiplexer
-     generic map(
-        SEL_NUMBER => 2,
-        BIT_WIDTH => 16
-    )
-     port map(
-        sel => adrsel,
-        input => adr_mux_input_concatenated,
-        output => adr_mux
+    -- Memory address selec tor multiplexer
+    adr_sel_generic_mux : entity work.generic_mux
+    port map(
+        mux_sel => adrsel,
+        mux_input => (
+            3 => x"0000",
+            2 => xy_yout, -- Data fetch based on general register value
+            1 => ar_out, -- Data fetch based on address register
+            0 => pc_out -- For fetching next op based on pc
+        ),
+        mux_output => adr_mux
     );
-
-    adr_mux_input_concatenated <= "0000000000000000" & xy_yout & ar_out & pc_out;
 
     -- Memory addres junction
     mem_addr <= seg_mux & adr_mux;
@@ -444,19 +442,23 @@ begin
         output => ar_out
     );
 
+
     -- Program counter multiplexer
-    pcsel_mux: entity work.multiplexer
-     generic map(
-        SEL_NUMBER => 3,
-        BIT_WIDTH => 16
-    )
+    pc_sel_generic_mux : entity work.generic_mux
     port map(
-        sel => pcsel_mux_sel_concetaned,
-        input => pcsel_mux_input_concatenated,
-        output => pcsel_in
+        mux_sel => iretsel & pcsel,
+        mux_input => (
+            7 => x"0000",
+            6 => INTERRUPT_JUMP_ADDR,
+            5 => pciout,
+            4 => INTERRUPT_JUMP_ADDR,
+            3 => ar_out,
+            2 => pc_out,
+            1 => alureg_low,
+            0 => alu_out_low
+        ),
+        mux_output => pcsel_in
     );
-    pcsel_mux_sel_concetaned <= iretsel & pcsel;
-    pcsel_mux_input_concatenated <= "0000000000000000" & INTERRUPT_JUMP_ADDR & pciout & INTERRUPT_JUMP_ADDR & ar_out & pc_out & alureg_low & alu_out_low;
 
     -- Instruction register
     instr_reg: entity work.custom_register
@@ -477,21 +479,19 @@ begin
     radrdest <= ir_out(15 downto 11);
     ar_in <= ir_out(15 downto 0);
 
-
-    --Destionation multiplexer
-    destination_mux: entity work.multiplexer
-    generic map(
-        SEL_NUMBER => 1,
-        BIT_WIDTH => 5
-    )
+    -- Destination generic multiplexer
+    -- Handles multiregister results, selects the address of destination register
+    -- Example used for DIV to store Remainder and Quotent in two distinct registers
+    destination_generic_mux: entity work.generic_mux
     port map(
-        sel => dsel_vector,
-        input => dest_mux_input_concatenated,
-        output => dest
+        mux_sel => (0 => dsel),
+        mux_input => (
+            1 => radrdest,
+            0 => radrx
+        ),
+        mux_output => dest
     );
 
-    dsel_vector <= (0 => dsel);
-    dest_mux_input_concatenated <= radrdest & radrx;
 
     -- ALU
     ALU_inst: entity work.ALU
@@ -512,53 +512,49 @@ begin
         ALU_standby => alusby
     );
 
-    -- X multiplexer
-    x_mux: entity work.multiplexer
-     generic map(
-        SEL_NUMBER => 2,
-        BIT_WIDTH => 16
-    )
-     port map(
-        sel => xsel,
-        input => x_mux_input_concatenated,
-        output => x_alu_a
+
+    -- X generic multiplexer multiplexer - Selection of operand #1 for ALU
+    x_generic_mux: entity work.generic_mux
+    port map(
+        mux_sel => xsel,
+        mux_input => (
+            3 => x"0000",
+            2 => x"0000",
+            1 => pc_out,
+            0 => xy_xout -- decoded register values
+        ),
+        mux_output => x_alu_a
     );
 
-    x_mux_input_concatenated <= "0000000000000000" & "0000000000000000" & pc_out & xy_xout;
-
-    -- Y multiplexer
-    y_mux: entity work.multiplexer
-     generic map(
-        SEL_NUMBER => 2,
-        BIT_WIDTH => 16
-    )
-     port map(
-        sel => ysel,
-        input => y_mux_input_concatenated,
-        output => y_alu_b
-    );
-    
-    y_mux_input_concatenated <= "0000000000000000" & "0000000000000001" & "0000000000000000" & xy_yout;
-
-
-    -- B select multiplexer
-    bs_mux: entity work.multiplexer
-     generic map(
-        SEL_NUMBER => 1,
-        BIT_WIDTH => 16
-    )
-     port map(
-        sel => bssel_vector,
-        input => bs_mux_input_concatenated,
-        output => bsmux
+    -- Y generic multiplexer multiplexer - Selection of operand #2 for ALU
+    y_generic_mux: entity work.generic_mux
+    port map(
+        mux_sel => ysel,
+        mux_input => (
+            3 => x"0000",
+            2 => x"0001",
+            1 => x"0000",
+            0 => xy_yout -- decoded register values
+        ),
+        mux_output => y_alu_b
     );
 
-    bssel_vector <= (0 => bssel);
 
-    bs_mux_input_concatenated <= dr_low_high & alureg_low(7 downto 0) & alureg_low;
+
+
+    -- B select generic multiplexer
+    -- Selects the data to be written to memory
+    bs_generic_mux: entity work.generic_mux
+    port map(
+        mux_sel => (0 => bssel),
+        mux_input => (
+            1 => dr_low_high & alureg_low(7 downto 0), -- writing a byte and keeping the high part
+            0 => alureg_low -- writing a 16 bit word
+        ),
+        mux_output => bsmux
+    );
 
     bsel_mux_out_to_output_peripheral_in <= dr_high & bsmux;
-
 
     -- XY register
     xy_reg: entity work.custom_register
@@ -576,31 +572,43 @@ begin
     xy_yout <= xy_out(31 downto 16);
     xy_in <= holder_y & holder_x;
 
+
+
+
+
     -- Memory read multiplexer
-    memsel_mux: entity work.multiplexer
-     generic map(
-        SEL_NUMBER => 2,
-        BIT_WIDTH => 16
-    )
-     port map(
-        sel => memssel,
-        input => memsel_mux_input_concatenated,
-        output => memsel_out
+    -- Handles the different modes of memory reading:
+    memsel_generic_mux: entity work.generic_mux
+    port map(
+        mux_sel => memssel,
+        mux_input => (
+            3 => x"0000",
+            2 => ses_out, -- Reading 8 bit word + 8 bit signed extend
+            1 => seu_out, -- Reading 8 bit word + 8 bit unsigned (zero) extend
+            0 => dr_low -- Reading 16 bit word
+        ),
+        mux_output => memsel_out
     );
-    memsel_mux_input_concatenated <= "0000000000000000" & ses_out & seu_out & dr_low;
 
     -- Register-write multiplexer
-    regw_mux: entity work.multiplexer
-     generic map(
-        SEL_NUMBER => 2,
-        BIT_WIDTH => 16
-    )
-     port map(
-        sel => rwsel,
-        input => write_mux_input_concatenated,
-        output => write_mux_out
+    -- Controls from which source the new content of the destination register is read from
+    regw_generic_mux: entity work.generic_mux
+    port map(
+        mux_sel => rwsel,
+        mux_input => (
+            3 => ar_in, -- Address from instruction coming from low bytes of Instr Reg
+            2 => alureg_high, -- high byte of ALU result
+            1 => alureg_low, -- low byte of ALU result
+            0 => memsel_out -- from memory
+        ),
+        mux_output => write_mux_out
     );
-    write_mux_input_concatenated <= ar_in &  alureg_high & alureg_low & memsel_out;
+
+
+
+
+
+
 
     -- Register holder
     register_holder_inst: entity work.register_holder
@@ -632,20 +640,19 @@ begin
         end if;
     end process;
 
+
     -- Memory RAM/ROM IR multiplexer
-    mem_ir_mux: entity work.multiplexer
-     generic map(
-        SEL_NUMBER => 1,
-        BIT_WIDTH => 32
-    )
-     port map(
-        sel => memory_ir_mux_sel,
-        input => memory_ir_mux_input_concatenated,
-        output => ram_mux_out
+    mem_ir_generic_mux: entity work.generic_mux
+    port map(
+        mux_sel => memory_ir_mux_sel,
+        mux_input => (
+            1 => romcont,
+            0 => ram_out
+        ),
+        mux_output => ram_mux_out
     );
 
-    memory_ir_mux_input_concatenated <= romcont & ram_out;
-    
+
     -- ROM
     ROM_inst: entity work.ROM
      generic map(
@@ -672,7 +679,7 @@ begin
     -- Only write if not currently performin memory mapping
     ramwe <= (not mmap_consider) and ramw;
     ramw_neg <= not ramw;
-    
+
     -- Memory mapping module
     MMAP_inst: entity work.MMAP
      generic map(
@@ -691,18 +698,17 @@ begin
 
     mmap_consider_vector <= (0 => mmap_consider);
 
-    from_input_peripheral_mux: entity work.multiplexer
-     generic map(
-        SEL_NUMBER => 1,
-        BIT_WIDTH => 32
-    )
-     port map(
-        sel => mmap_consider_vector,
-        input => from_input_peripheral_mux_input_concatenated,
-        output => input_peripheral_mux_ir
+
+    from_input_peripheral_generic_mux: entity work.generic_mux
+    port map(
+        mux_sel => mmap_consider_vector,
+        mux_input => (
+            1 => x"0000" & pr_dataout,   -- peripherals sned 16 bit words but RAM needs 32
+            0 => ram_mux_out
+        ),
+        mux_output => input_peripheral_mux_ir
     );
 
-    from_input_peripheral_mux_input_concatenated <= "0000000000000000" & pr_dataout & ram_mux_out;
 
     to_output_demultiplexer: entity work.demultiplexer
      generic map(
@@ -738,17 +744,21 @@ begin
         pdatin => pr_datain,
         mmap_sel => mmap_sel
     );
-    
 
-    -- Interrupt buffer
-    interrupt_buffer_inst: entity work.interrupt_buffer
-     port map(
-        clk => clk,
-        interrupt => clk_out,
+
+
+    interrupt_controller_inst : entity work.interrupt_controller
+    port map(
         reset => reset,
-        pciwe => pciwe,
-        intbuf_out => interrupt_buffer_out
+        clk => clk,
+        pciwe => pciwe, -- This signal indicates that the current top priority interrupt has been processed by the CPU
+        timer_int => '0',
+        peripheral_int => '0',
+        interrupt_address => interrupt_address,
+        control_unit_any_interrupt_signal => interrupt_buffer_out
     );
+
+
 
     interrupt_program_counter_store: entity work.custom_register
      generic map(
@@ -770,9 +780,9 @@ begin
 
     --gpio_driver_signal_read_data_2 <= ((others => '1') ); -- temporary could be used for a second gpio set
     gpio_driver_signal_read_data_aggregated <= gpio_driver_signal_read_data_2 & gpio_driver_signal_read_data_1;
-    
+
     in1 <= gpio_driver_signal_read_data_aggregated;
-    
+
     gpio_driver_inst: entity work.gpio_driver
      generic map(
         PORTS => 8
