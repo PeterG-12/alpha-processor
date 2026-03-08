@@ -10,6 +10,7 @@ entity spidriver is
         miso : in std_logic;
         mosi, sck : out std_logic;
         cs_vector : out std_logic_vector(4 downto 0);
+        finished : out std_logic;
         addr : in std_logic_vector(2 downto 0));
 end spidriver;
 
@@ -54,6 +55,8 @@ begin
             address_buffer <= (others => '0');
             start_transfer_buffered <= '0';
             start_transfer_rising <= '0';
+            finished <= '0';
+
 
         elsif rising_edge(clk) then
 
@@ -72,6 +75,7 @@ begin
             sync_2 <= sync_1;
 
             if curr_state = Standby then
+                finished <= '0';
                 sck <= CLK_IDLE;
                 if  start_transfer_rising = '1' then
                     curr_state <= Transfer;
@@ -110,6 +114,7 @@ begin
                 sck <= CLK_IDLE;
                 mosi <= '0';
                 if back_to_standby_counter = BACK_COUNT then
+                    finished <= '1';
                     back_to_standby_counter <= 1;
                     curr_state <= Standby;
                 else 

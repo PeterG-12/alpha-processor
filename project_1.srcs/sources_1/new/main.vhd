@@ -203,6 +203,10 @@ architecture Behavioral of main is
 
     signal out0 : std_logic_vector(15 downto 0) := "0000000000000000";
 
+
+    signal peripheral_interrupt0 : std_logic := '0'';
+    signal peripheral_interrupt1 : std_logic := '0';
+
 begin
 
     -- Timer
@@ -733,7 +737,7 @@ begin
         clk => clk,
         pciwe => pciwe, -- This signal indicates that the current top priority interrupt has been processed by the CPU
         timer_int => timer_pulse,
-        peripheral_int => '0',
+        peripheral_int => peripheral_interrupt0,
         interrupt_address => interrupt_address,
         control_unit_any_interrupt_signal => interrupt_buffer_out
     );
@@ -796,6 +800,7 @@ begin
         miso => miso,
         mosi => mosi,
         sck => sck,
+        finished => peripheral_interrupt0,
         cs_vector => cs_vector,
         addr => spi_address
     );
