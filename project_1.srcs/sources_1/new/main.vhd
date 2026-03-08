@@ -4,7 +4,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 -- Project: Custom 16-bit RISC Processor
 -- Author: Péter Gál
--- Description: Features 6-bit Opcode, MMIO, and Segmented Memory, Interrupt timer
+-- Description: Features 6-bit Opcode, MMIO, Multi-interrupt handling
 -- Target: Xilinx Artix-7 (Basys 3 / Nexys A7)
 
 
@@ -15,14 +15,8 @@ entity main is
         -- SSD outputs
         an : out std_logic_vector(3 downto 0);
         seg : out std_logic_vector(6 downto 0);
-        --out1 : out std_logic_vector(15 downto 0);
-        --out0 : out std_logic_vector(15 downto 0);
         JB : inout std_logic_vector(7 downto 0);
-        --in0 : in std_logic_vector(15 downto 0);
-        --in1 : in std_logic_vector(15 downto 0)
         interrupt : in std_logic;
-        --dht_pin : inout std_logic;
-        --dht_start_signal : in std_logic;
         miso : in std_logic;
         mosi, sck : out std_logic;
         cs_vector : out std_logic_vector(4 downto 0)
@@ -30,7 +24,7 @@ entity main is
 end main;
 
 architecture Behavioral of main is
-    signal clk_out : std_logic;
+    signal timer_pulse : std_logic;
     signal out1 : std_logic_vector(15 downto 0);
     signal in0 : std_logic_vector(15 downto 0);
 
@@ -212,16 +206,19 @@ architecture Behavioral of main is
 begin
 
     -- Timer
-    timer_instance: entity work.clockdivider
-     port map(
+    timer_instance: entity work.cpu_timer
+    generic map(
+        FREQ => 100_000_000
+    )
+    port map(
         clk_in => clk,
         reset => reset,
-        clk_out => clk_out
+        pulse_out => timer_pulse
     );
 
     -- SSD module
     ssd_driver: entity work.Switchtossd
-     port map(
+    port map(
         inputvec => reg_0_internal,
         clk => clk_extrn, -- This does not need clock divider
         reset => reset,
@@ -735,7 +732,7 @@ begin
         reset => reset,
         clk => clk,
         pciwe => pciwe, -- This signal indicates that the current top priority interrupt has been processed by the CPU
-        timer_int => '0',
+        timer_int => timer_pulse,
         peripheral_int => '0',
         interrupt_address => interrupt_address,
         control_unit_any_interrupt_signal => interrupt_buffer_out

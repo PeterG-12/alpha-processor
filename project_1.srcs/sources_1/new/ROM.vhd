@@ -13,19 +13,16 @@ architecture Behavioral of ROM is
 
 type rom_type is array (0 to 2 ** 14 - 1) of std_logic_vector(DATA_WIDTH - 1 downto 0);
 signal internal_memory : rom_type := (
-0 => x"2c00b5ed",
-1 => x"2ce00000",
-2 => x"38e00000",
+
+    0 => x"2c001234",
+    1 => x"2ce00001",
+    2 => x"38e00000",
 
 
 
-
-192 => x"2c200001",
-193=> x"3c410000",
-194 => x"9c000000",
-
-
-
+    192 => x"2c200001",
+    193=> x"3c410000",
+    194 => x"9c000000",
 
     others => (others => '0')
     );
