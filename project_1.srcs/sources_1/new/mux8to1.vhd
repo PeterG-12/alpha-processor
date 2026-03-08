@@ -2,7 +2,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-entity mux4to1 is
+entity mux8to1 is
     generic(BIT_WIDTH : integer := 1);
     port(
         sel : in std_logic_vector(2 downto 0);
@@ -17,9 +17,9 @@ entity mux4to1 is
         mux_out : out std_logic_vector(BIT_WIDTH - 1 downto 0)
         );
         
-end mux4to1;
+end mux8to1;
 
-architecture Behavioral of mux4to1 is
+architecture Behavioral of mux8to1 is
 
 
 begin

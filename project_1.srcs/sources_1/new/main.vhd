@@ -74,20 +74,11 @@ architecture Behavioral of main is
     signal overflow_f : std_logic;
     signal zero_f : std_logic;
 
-    -- Dsel and bsel vector
-    signal bssel_vector : std_logic_vector(0 downto 0);
-
-    signal dsel_vector : std_logic_vector(0 downto 0);
-
     -- Segment signals
     signal segment_in : std_logic_vector(1 downto 0);
 
     signal cs_out : std_logic_vector(1 downto 0);
     signal ds_out : std_logic_vector(1 downto 0);
-
-    -- Segment MUX helpers
-    signal cs_ds_concat : std_logic_vector(3 downto 0);
-    signal seg_sel_vec : std_logic_vector(0 downto 0);
 
     signal seg_mux : std_logic_vector(1 downto 0);
 
@@ -98,7 +89,6 @@ architecture Behavioral of main is
 
     -- RAM address selector MUX signal
     signal adr_mux :  std_logic_vector(15 downto 0);
-    signal adr_mux_input_concatenated : std_logic_vector(63 downto 0);
 
     -- Memory addres junction signal
     signal mem_addr  :  std_logic_vector(17 downto 0);
@@ -132,11 +122,6 @@ architecture Behavioral of main is
     signal ar_in : std_logic_vector(15 downto 0);
     signal ar_out : std_logic_vector(15 downto 0);
 
-
-    -- PCSEL multiplexer helper
-    signal pcsel_mux_sel_concetaned : std_logic_vector(2 downto 0); -- combining pcsel and iretsel
-    signal pcsel_mux_input_concatenated : std_logic_vector(127 downto 0);
-
     -- Instruction register
     signal ir_out : std_logic_vector(31 downto 0);
 
@@ -146,17 +131,11 @@ architecture Behavioral of main is
 
     signal dest : std_logic_vector(4 downto 0);
 
-    -- Destination mux helper
-    signal dest_mux_input_concatenated : std_logic_vector(9 downto 0);
 
     -- ALU
     signal x_alu_a : std_logic_vector(15 downto 0);
     signal y_alu_b : std_logic_vector(15 downto 0);
     signal alusby : std_logic;
-
-    -- Pre ALU MUX helpers
-    signal x_mux_input_concatenated : std_logic_vector(63 downto 0);
-    signal y_mux_input_concatenated : std_logic_vector(63 downto 0);
 
 
     -- XY reg
@@ -167,7 +146,6 @@ architecture Behavioral of main is
 
     -- B select multiplexer
     signal bsmux : std_logic_vector(15 downto 0);
-    signal bs_mux_input_concatenated : std_logic_vector(31 downto 0);
 
     -- RAM
     signal ramwe : std_logic;
@@ -180,26 +158,21 @@ architecture Behavioral of main is
     signal holder_y : std_logic_vector(15 downto 0);
 
     -- Memsel multiplexer
-    signal memsel_mux_input_concatenated : std_logic_vector(63 downto 0);
     signal memsel_out : std_logic_vector(15 downto 0);
 
     -- Register-write multiplexer
-    signal write_mux_input_concatenated : std_logic_vector(63 downto 0);
     signal write_mux_out : std_logic_vector(15 downto 0);
 
 
     -- Memory RAM/ROM IR multiplexer
-    signal memory_ir_mux_input_concatenated : std_logic_vector(63 downto 0);
     signal memory_ir_mux_sel : std_logic_vector(0 downto 0);
 
     -- Peripheral output dmux outputs held in a single vector
-    signal out_peri_dmux_out_vector : std_logic_vector(31 downto 0);
     signal mmap_consider_vector : std_logic_vector(0 downto 0);
     signal mmap_sel : std_logic_vector(4 downto 0);
     signal mmap_consider : std_logic;
 
     -- From input peripheral multiplexer helpers
-    signal from_input_peripheral_mux_input_concatenated : std_logic_vector(63 downto 0);
     signal input_peripheral_mux_ir : std_logic_vector(31 downto 0);
 
     -- To output peripheral demultiplexer helpers
@@ -217,7 +190,6 @@ architecture Behavioral of main is
     -- Interrupt store PCI
     signal pciout : std_logic_vector(15 downto 0);
     signal interrupt_address : std_logic_vector(15 downto 0) := "0000000011000000";
-    signal nullbuf : std_logic_vector(15 downto 0);
 
 
     -- GPIO signals
@@ -288,14 +260,15 @@ begin
     );
 
     -- Segment selector multiplexer
-    segment_selector_generic_mux : entity work.generic_mux
+    segment_selector_generic_mux : entity work.mux2to1
+    generic map(
+        BIT_WIDTH => 2
+    )
     port map(
-        mux_sel => std_logic_vector'(0 => segsel),
-        mux_input => (
-            1 => cs_out,
-            0 => ds_out
-        ),
-        mux_output => seg_mux -- routes the segment bits to the RAM address
+        sel => segsel,
+        in1 => cs_out,
+        in0 => ds_out,
+        mux_out => seg_mux -- routes the segment bits to the RAM address
     );
 
 
@@ -312,17 +285,18 @@ begin
         output => pc_out
     );
 
-    -- Memory address selec tor multiplexer
-    adr_sel_generic_mux : entity work.generic_mux
+    -- Memory address selector multiplexer
+    adr_sel_generic_mux : entity work.mux4to1
+    generic map(
+        BIT_WIDTH => 16
+    )
     port map(
-        mux_sel => adrsel,
-        mux_input => (
-            3 => x"0000",
-            2 => xy_yout, -- Data fetch based on general register value
-            1 => ar_out, -- Data fetch based on address register
-            0 => pc_out -- For fetching next op based on pc
-        ),
-        mux_output => adr_mux
+        sel => adrsel,
+        in3 => x"0000",
+        in2 => xy_yout, -- Data fetch based on general register value
+        in1 => ar_out,  -- Data fetch based on address register
+        in0 => pc_out,  -- For fetching next op based on pc
+        mux_out => adr_mux
     );
 
     -- Memory addres junction
@@ -444,20 +418,22 @@ begin
 
 
     -- Program counter multiplexer
-    pc_sel_generic_mux : entity work.generic_mux
+    -- Program counter multiplexer
+    pc_sel_generic_mux : entity work.mux8to1
+    generic map(
+        BIT_WIDTH => 16
+    )
     port map(
-        mux_sel => iretsel & pcsel,
-        mux_input => (
-            7 => x"0000",
-            6 => INTERRUPT_JUMP_ADDR,
-            5 => pciout,
-            4 => INTERRUPT_JUMP_ADDR,
-            3 => ar_out,
-            2 => pc_out,
-            1 => alureg_low,
-            0 => alu_out_low
-        ),
-        mux_output => pcsel_in
+        sel => iretsel & pcsel,
+        in7 => x"0000",
+        in6 => interrupt_address,
+        in5 => pciout,
+        in4 => interrupt_address,
+        in3 => ar_out,
+        in2 => pc_out,
+        in1 => alureg_low,
+        in0 => alu_out_low,
+        mux_out => pcsel_in
     );
 
     -- Instruction register
@@ -482,14 +458,15 @@ begin
     -- Destination generic multiplexer
     -- Handles multiregister results, selects the address of destination register
     -- Example used for DIV to store Remainder and Quotent in two distinct registers
-    destination_generic_mux: entity work.generic_mux
+    destination_generic_mux: entity work.mux2to1
+    generic map(
+        BIT_WIDTH => 5
+    )
     port map(
-        mux_sel => (0 => dsel),
-        mux_input => (
-            1 => radrdest,
-            0 => radrx
-        ),
-        mux_output => dest
+        sel => dsel,
+        in1 => radrdest,
+        in0 => radrx,
+        mux_out => dest
     );
 
 
@@ -513,30 +490,32 @@ begin
     );
 
 
-    -- X generic multiplexer multiplexer - Selection of operand #1 for ALU
-    x_generic_mux: entity work.generic_mux
+    -- X generic multiplexer - Selection of operand #1 for ALU
+    x_generic_mux: entity work.mux4to1
+    generic map(
+        BIT_WIDTH => 16
+    )
     port map(
-        mux_sel => xsel,
-        mux_input => (
-            3 => x"0000",
-            2 => x"0000",
-            1 => pc_out,
-            0 => xy_xout -- decoded register values
-        ),
-        mux_output => x_alu_a
+        sel => xsel,
+        in3 => x"0000",
+        in2 => x"0000",
+        in1 => pc_out,
+        in0 => xy_xout, -- decoded register values
+        mux_out => x_alu_a
     );
 
-    -- Y generic multiplexer multiplexer - Selection of operand #2 for ALU
-    y_generic_mux: entity work.generic_mux
+    -- Y generic multiplexer - Selection of operand #2 for ALU
+    y_generic_mux: entity work.mux4to1
+    generic map(
+        BIT_WIDTH => 16
+    )
     port map(
-        mux_sel => ysel,
-        mux_input => (
-            3 => x"0000",
-            2 => x"0001",
-            1 => x"0000",
-            0 => xy_yout -- decoded register values
-        ),
-        mux_output => y_alu_b
+        sel => ysel,
+        in3 => x"0000",
+        in2 => x"0001",
+        in1 => x"0000",
+        in0 => xy_yout, -- decoded register values
+        mux_out => y_alu_b
     );
 
 
@@ -544,14 +523,15 @@ begin
 
     -- B select generic multiplexer
     -- Selects the data to be written to memory
-    bs_generic_mux: entity work.generic_mux
+    bs_generic_mux: entity work.mux2to1
+    generic map(
+        BIT_WIDTH => 16
+    )
     port map(
-        mux_sel => (0 => bssel),
-        mux_input => (
-            1 => dr_low_high & alureg_low(7 downto 0), -- writing a byte and keeping the high part
-            0 => alureg_low -- writing a 16 bit word
-        ),
-        mux_output => bsmux
+        sel => bssel,
+        in1 => dr_low_high & alureg_low(7 downto 0), -- writing a byte and keeping the high part
+        in0 => alureg_low, -- writing a 16 bit word
+        mux_out => bsmux
     );
 
     bsel_mux_out_to_output_peripheral_in <= dr_high & bsmux;
@@ -578,30 +558,32 @@ begin
 
     -- Memory read multiplexer
     -- Handles the different modes of memory reading:
-    memsel_generic_mux: entity work.generic_mux
+    memsel_generic_mux: entity work.mux4to1
+    generic map(
+        BIT_WIDTH => 16
+    )
     port map(
-        mux_sel => memssel,
-        mux_input => (
-            3 => x"0000",
-            2 => ses_out, -- Reading 8 bit word + 8 bit signed extend
-            1 => seu_out, -- Reading 8 bit word + 8 bit unsigned (zero) extend
-            0 => dr_low -- Reading 16 bit word
-        ),
-        mux_output => memsel_out
+        sel => memssel,
+        in3 => x"0000",
+        in2 => ses_out, -- Reading 8 bit word + 8 bit signed extend
+        in1 => seu_out, -- Reading 8 bit word + 8 bit unsigned (zero) extend
+        in0 => dr_low,  -- Reading 16 bit word
+        mux_out => memsel_out
     );
 
     -- Register-write multiplexer
     -- Controls from which source the new content of the destination register is read from
-    regw_generic_mux: entity work.generic_mux
+    regw_generic_mux: entity work.mux4to1
+    generic map(
+        BIT_WIDTH => 16
+    )
     port map(
-        mux_sel => rwsel,
-        mux_input => (
-            3 => ar_in, -- Address from instruction coming from low bytes of Instr Reg
-            2 => alureg_high, -- high byte of ALU result
-            1 => alureg_low, -- low byte of ALU result
-            0 => memsel_out -- from memory
-        ),
-        mux_output => write_mux_out
+        sel => rwsel,
+        in3 => ar_in,       -- Address from instruction coming from low bytes of Instr Reg
+        in2 => alureg_high, -- high byte of ALU result
+        in1 => alureg_low,  -- low byte of ALU result
+        in0 => memsel_out,  -- from memory
+        mux_out => write_mux_out
     );
 
 
@@ -642,16 +624,16 @@ begin
 
 
     -- Memory RAM/ROM IR multiplexer
-    mem_ir_generic_mux: entity work.generic_mux
+    mem_ir_generic_mux: entity work.mux2to1
+    generic map(
+        BIT_WIDTH => 32
+    )
     port map(
-        mux_sel => memory_ir_mux_sel,
-        mux_input => (
-            1 => romcont,
-            0 => ram_out
-        ),
-        mux_output => ram_mux_out
+        sel => memory_ir_mux_sel(0),
+        in1 => romcont,
+        in0 => ram_out,
+        mux_out => ram_mux_out
     );
-
 
     -- ROM
     ROM_inst: entity work.ROM
@@ -699,14 +681,15 @@ begin
     mmap_consider_vector <= (0 => mmap_consider);
 
 
-    from_input_peripheral_generic_mux: entity work.generic_mux
+    from_input_peripheral_generic_mux: entity work.mux2to1
+    generic map(
+        BIT_WIDTH => 32
+    )
     port map(
-        mux_sel => mmap_consider_vector,
-        mux_input => (
-            1 => x"0000" & pr_dataout,   -- peripherals sned 16 bit words but RAM needs 32
-            0 => ram_mux_out
-        ),
-        mux_output => input_peripheral_mux_ir
+        sel => mmap_consider_vector(0),
+        in1 => x"0000" & pr_dataout,   -- peripherals send 16 bit words but RAM needs 32
+        in0 => ram_mux_out,
+        mux_out => input_peripheral_mux_ir
     );
 
 
