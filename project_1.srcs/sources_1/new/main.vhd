@@ -204,10 +204,26 @@ architecture Behavioral of main is
     signal out0 : std_logic_vector(15 downto 0) := "0000000000000000";
 
 
-    signal peripheral_interrupt0 : std_logic := '0'';
+    signal peripheral_interrupt0 : std_logic := '0';
     signal peripheral_interrupt1 : std_logic := '0';
 
+    signal interrupt_sync1 : std_logic := '0';
+    signal interrupt_sync2 : std_logic := '0';
+
 begin
+
+    -- Syncronising to prevent metastability
+    process(clk, reset)
+    begin
+        if reset = '1' then
+            interrupt_sync1 <= '0';
+            interrupt_sync2 <= '0';
+        elsif rising_edge(clk) then
+            interrupt_sync1 <= not interrupt;
+            interrupt_sync2 <= interrupt_sync1;
+        end if;
+    end process;
+
 
     -- Timer
     timer_instance: entity work.cpu_timer
@@ -426,7 +442,7 @@ begin
     )
     port map(
         sel => iretsel & pcsel,
-        in7 => x"0000",
+        in7 => interrupt_address,
         in6 => interrupt_address,
         in5 => pciout,
         in4 => interrupt_address,
@@ -738,6 +754,7 @@ begin
         pciwe => pciwe, -- This signal indicates that the current top priority interrupt has been processed by the CPU
         timer_int => timer_pulse,
         peripheral_int => peripheral_interrupt0,
+        external_int => interrupt_sync2,
         interrupt_address => interrupt_address,
         control_unit_any_interrupt_signal => interrupt_buffer_out
     );
