@@ -256,7 +256,7 @@ OPERATION_SIZE = 32
 
 binstring_array = []
 
-def main(file_name):
+def main(file_name, start_line = 0):
     global memory_labels
     global binstring_array
     ## Check whether file exitst
@@ -304,7 +304,7 @@ def main(file_name):
                 for memory_label in memory_labels:
                     if memory_label in line.split():
                         # Replace labels with addresses
-                        line = line.replace(memory_label, str(memory_labels[memory_label]))
+                        line = line.replace(memory_label, str(memory_labels[memory_label] + start_line))
 
                 # Tokenise
                 tokens = tokenise_line(line)
@@ -364,7 +364,7 @@ def main(file_name):
                         fw.write(bitstring_to_hex(bitstring)[2:] + '\n')
 
     with open("rom.hex", "r") as f:
-        i = 0
+        i = start_line
         with open("vhdl_rom.hex", "w") as fw:
             lines = f.readlines()
             
@@ -382,7 +382,10 @@ def main(file_name):
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        main(sys.argv[1])
+        if len(sys.argv) > 2:
+            main(sys.argv[1], int(sys.argv[2]))
+        else:
+            main(sys.argv[1])
     else:
         print("Provide the code file name")
 
