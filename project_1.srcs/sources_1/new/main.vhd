@@ -27,7 +27,7 @@ architecture Behavioral of main is
     signal timer_pulse : std_logic;
     signal out1 : std_logic_vector(15 downto 0);
     signal in0 : std_logic_vector(15 downto 0);
-
+    
     signal in1 : std_logic_vector(15 downto 0);
 
     -- Internal clock
@@ -783,7 +783,7 @@ begin
     gpio_driver_signal_read_data_aggregated <= gpio_driver_signal_read_data_2 & gpio_driver_signal_read_data_1;
 
     in1 <= gpio_driver_signal_read_data_aggregated;
-
+    in0 <= gpio_driver_signal_read_data_2 & x"00";
     gpio_driver_inst: entity work.gpio_driver
      generic map(
         PORTS => 8

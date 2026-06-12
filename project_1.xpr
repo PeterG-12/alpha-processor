@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Product Version: Vivado v2025.1 (64-bit)                              -->
+<!-- Product Version: Vivado v2025.2 (64-bit)                              -->
 <!--                                                                         -->
 <!-- Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.                   -->
 <!-- Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.   -->
 
-<Project Product="Vivado" Version="7" Minor="70" Path="/home/peter/Vivado/project_1/project_1.xpr">
+<Project Product="Vivado" Version="7" Minor="71" Path="/home/peter/Vivado/project_1/project_1.xpr">
   <DefaultLaunch Dir="$PRUNDIR"/>
   <Configuration>
     <Option Name="Id" Val="ba0727b6739a495cbbb74c958eda553b"/>
@@ -29,11 +29,11 @@
     <Option Name="SimulatorGccInstallDirVCS" Val=""/>
     <Option Name="SimulatorGccInstallDirRiviera" Val=""/>
     <Option Name="SimulatorGccInstallDirActiveHdl" Val=""/>
-    <Option Name="SimulatorVersionXsim" Val="2025.1"/>
-    <Option Name="SimulatorVersionModelSim" Val="2024.3"/>
-    <Option Name="SimulatorVersionQuesta" Val="2024.3_3"/>
-    <Option Name="SimulatorVersionXcelium" Val="24.09.001"/>
-    <Option Name="SimulatorVersionVCS" Val="W-2024.09-SP1"/>
+    <Option Name="SimulatorVersionXsim" Val="2025.2"/>
+    <Option Name="SimulatorVersionModelSim" Val="2025.2"/>
+    <Option Name="SimulatorVersionQuesta" Val="2025.2"/>
+    <Option Name="SimulatorVersionXcelium" Val="25.03.002"/>
+    <Option Name="SimulatorVersionVCS" Val="X-2025.06"/>
     <Option Name="SimulatorVersionRiviera" Val="2024.10"/>
     <Option Name="SimulatorVersionActiveHdl" Val="15.0"/>
     <Option Name="SimulatorGccVersionXsim" Val="9.3.0"/>
@@ -91,6 +91,34 @@
   <FileSets Version="1" Minor="32">
     <FileSet Name="sources_1" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1" RelGenDir="$PGENDIR/sources_1">
       <Filter Type="Srcs"/>
+      <File Path="$PSRCDIR/sources_1/new/interrupt_buffer.vhd">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/new/dhtreceiver.vhd">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/new/to_simulate_main.vhd">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/new/usb_ps2_driver.vhd">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <File Path="$PSRCDIR/sources_1/new/ALU.vhd">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -271,34 +299,6 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/new/interrupt_buffer.vhd">
-        <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sources_1/new/dhtreceiver.vhd">
-        <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sources_1/new/to_simulate_main.vhd">
-        <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sources_1/new/usb_ps2_driver.vhd">
-        <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
       <Config>
         <Option Name="DesignMode" Val="RTL"/>
         <Option Name="TopModule" Val="main"/>
@@ -318,12 +318,6 @@
     </FileSet>
     <FileSet Name="sim_1" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/sim_1" RelGenDir="$PGENDIR/sim_1">
       <Filter Type="Srcs"/>
-      <File Path="$PSRCDIR/sim_1/new/mainsim.vhd">
-        <FileInfo>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
       <File Path="$PSRCDIR/sim_1/new/ps2sim.vhd">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
@@ -385,6 +379,12 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
+      <File Path="$PSRCDIR/sim_1/new/mainsim.vhd">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <Config>
         <Option Name="DesignMode" Val="RTL"/>
         <Option Name="TopModule" Val="mainsim"/>
@@ -401,6 +401,14 @@
         <Option Name="CosimPdi" Val=""/>
         <Option Name="CosimPlatform" Val=""/>
         <Option Name="CosimElf" Val=""/>
+        <Option Name="CosimRootfs" Val=""/>
+        <Option Name="CosimSDfile" Val=""/>
+        <Option Name="CosimSDDir" Val=""/>
+        <Option Name="CosimOutDir" Val=""/>
+        <Option Name="CosimXsa" Val=""/>
+        <Option Name="CosimAIKernel" Val=""/>
+        <Option Name="LogicalNoCTop" Val=""/>
+        <Option Name="LogicalNoCTopLib" Val=""/>
         <Option Name="Dmv" Val=""/>
       </Config>
     </FileSet>

@@ -28,7 +28,7 @@ constant BACK_COUNT : integer := 100;
 signal back_to_standby_counter : integer range 1 to BACK_COUNT := 1;
 signal freq_divider_counter : integer range 1 to FREQ_RATIO := 1;
 signal spi_counter : integer range 0 to 8 := 0;
-signal internal_buffer : std_logic_vector(7 downto 0);
+signal internal_buffer : std_logic_vector(7 downto 0) := x"00";
 signal address_buffer : std_logic_vector(2 downto 0);
 
 signal sync_1, sync_2 : std_logic := '0';
@@ -84,11 +84,6 @@ begin
                     freq_divider_counter <= 1;
                     mosi <= data_in(7);
                 end if;
-            elsif curr_state = Transfer and spi_counter = 8 then
-                curr_state <= BackToStandby;
-                data_out <= internal_buffer;
-                spi_counter <= 0;
-                freq_divider_counter <= 1;
             end if;
 
 
@@ -103,6 +98,13 @@ begin
                     internal_buffer <= internal_buffer(6 downto 0) & sync_2;
                     freq_divider_counter <= 1;
                     spi_counter <= spi_counter + 1;
+                end if;
+                
+                if spi_counter = 8 then
+                    curr_state <= BackToStandby;
+                    data_out <= internal_buffer;
+                    spi_counter <= 0;
+                    freq_divider_counter <= 1;
                 end if;
 
                 if freq_divider_counter < FREQ_RATIO then

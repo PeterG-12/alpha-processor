@@ -27,8 +27,8 @@ set_property -dict { PACKAGE_PIN W5   IOSTANDARD LVCMOS33 } [get_ports clk_extrn
 #
 #
 ### LEDs
-set_property -dict { PACKAGE_PIN U16   IOSTANDARD LVCMOS33 } [get_ports {debug1}]
-set_property -dict { PACKAGE_PIN E19   IOSTANDARD LVCMOS33 } [get_ports {debug2}]
+#set_property -dict { PACKAGE_PIN U16   IOSTANDARD LVCMOS33 } [get_ports {debug1}]
+#set_property -dict { PACKAGE_PIN E19   IOSTANDARD LVCMOS33 } [get_ports {debug2}]
 #set_property -dict { PACKAGE_PIN U19   IOSTANDARD LVCMOS33 } [get_ports {out0[2]}]
 #set_property -dict { PACKAGE_PIN V19   IOSTANDARD LVCMOS33 } [get_ports {out0[3]}]
 #set_property -dict { PACKAGE_PIN W18   IOSTANDARD LVCMOS33 } [get_ports {out0[4]}]
@@ -67,39 +67,39 @@ set_property -dict { PACKAGE_PIN U18   IOSTANDARD LVCMOS33 } [get_ports reset]
 #set_property -dict { PACKAGE_PIN T18   IOSTANDARD LVCMOS33 } [get_ports interrupt]
 #set_property -dict { PACKAGE_PIN W19   IOSTANDARD LVCMOS33 } [get_ports btnL]
 #set_property -dict { PACKAGE_PIN T17   IOSTANDARD LVCMOS33 } [get_ports btnR]
-set_property -dict { PACKAGE_PIN U17   IOSTANDARD LVCMOS33 } [get_ports dht_start_signal]
+#set_property -dict { PACKAGE_PIN U17   IOSTANDARD LVCMOS33 } [get_ports dht_start_signal]
 
 
 ##Pmod Header JA
-set_property -dict { PACKAGE_PIN J1   IOSTANDARD LVCMOS33 } [get_ports {interrupt}];#Sch name = JA1
+#set_property -dict { PACKAGE_PIN J1   IOSTANDARD LVCMOS33 } [get_ports {interrupt}];#Sch name = JA1
 #set_property -dict { PACKAGE_PIN L2   IOSTANDARD LVCMOS33 PULLDOWN true } [get_ports {miso}];#Sch name = JA2
 #set_property -dict { PACKAGE_PIN J2   IOSTANDARD LVCMOS33 } [get_ports {sck}];#Sch name = JA3
 #set_property -dict { PACKAGE_PIN G2   IOSTANDARD LVCMOS33 } [get_ports {cs_vector[0]}];#Sch name = JA4
-#set_property -dict { PACKAGE_PIN H1   IOSTANDARD LVCMOS33 } [get_ports {cs_vector[1]}];#Sch name = JA7
-#set_property -dict { PACKAGE_PIN K2   IOSTANDARD LVCMOS33 } [get_ports {cs_vector[2]}];#Sch name = JA8
-#set_property -dict { PACKAGE_PIN H2   IOSTANDARD LVCMOS33 } [get_ports {cs_vector[3]}];#Sch name = JA9
-#set_property -dict { PACKAGE_PIN G3   IOSTANDARD LVCMOS33 } [get_ports {cs_vector[4]}];#Sch name = JA10
+set_property -dict { PACKAGE_PIN H1   IOSTANDARD LVCMOS33 } [get_ports {cs_vector[1]}];#Sch name = JA7
+set_property -dict { PACKAGE_PIN K2   IOSTANDARD LVCMOS33 } [get_ports {cs_vector[2]}];#Sch name = JA8
+set_property -dict { PACKAGE_PIN H2   IOSTANDARD LVCMOS33 } [get_ports {cs_vector[3]}];#Sch name = JA9
+set_property -dict { PACKAGE_PIN G3   IOSTANDARD LVCMOS33 } [get_ports {cs_vector[4]}];#Sch name = JA10
 
 ##Pmod Header JB
-set_property -dict { PACKAGE_PIN A14   IOSTANDARD LVCMOS33 } [get_ports {JB[0]}];#Sch name = JB1
-set_property -dict { PACKAGE_PIN A16   IOSTANDARD LVCMOS33 } [get_ports {JB[1]}];#Sch name = JB2
-set_property -dict { PACKAGE_PIN B15   IOSTANDARD LVCMOS33 } [get_ports {JB[2]}];#Sch name = JB3
-set_property -dict { PACKAGE_PIN B16   IOSTANDARD LVCMOS33 PULLDOWN true} [get_ports {JB[3]}];#Sch name = JB4
-set_property -dict { PACKAGE_PIN A15   IOSTANDARD LVCMOS33 PULLDOWN true} [get_ports {JB[4]}];#Sch name = JB7
-set_property -dict { PACKAGE_PIN A17   IOSTANDARD LVCMOS33 PULLDOWN true} [get_ports {JB[5]}];#Sch name = JB8
-set_property -dict { PACKAGE_PIN C15   IOSTANDARD LVCMOS33 PULLDOWN true} [get_ports {JB[6]}];#Sch name = JB9
-set_property -dict { PACKAGE_PIN C16   IOSTANDARD LVCMOS33 } [get_ports {JB[7]}];#Sch name = JB10
+set_property -dict { PACKAGE_PIN A14   IOSTANDARD LVCMOS33 } [get_ports {miso}];#Sch name = JB1
+set_property -dict { PACKAGE_PIN A16   IOSTANDARD LVCMOS33 } [get_ports {interrupt}];#Sch name = JB2
+set_property -dict { PACKAGE_PIN B15   IOSTANDARD LVCMOS33 } [get_ports {cs_vector[0]}];#Sch name = JB3
+set_property -dict { PACKAGE_PIN B16   IOSTANDARD LVCMOS33 } [get_ports {sck}];#Sch name = JB4
+set_property -dict { PACKAGE_PIN A15   IOSTANDARD LVCMOS33 } [get_ports {mosi}];#Sch name = JB7
+#set_property -dict { PACKAGE_PIN A17   IOSTANDARD LVCMOS33 } [get_ports {JB[5]}];#Sch name = JB8
+#set_property -dict { PACKAGE_PIN C15   IOSTANDARD LVCMOS33 } [get_ports {JB[6]}];#Sch name = JB9
+#set_property -dict { PACKAGE_PIN C16   IOSTANDARD LVCMOS33 } [get_ports {JB[7]}];#Sch name = JB10
 
 ##Pmod Header JC
 ## Pmod Header JC
-set_property -dict { PACKAGE_PIN K17   IOSTANDARD LVCMOS33 } [get_ports {mosi}];#Sch name = JC1
-set_property -dict { PACKAGE_PIN M18   IOSTANDARD LVCMOS33 PULLDOWN true } [get_ports {miso}];#Sch name = JC2
-set_property -dict { PACKAGE_PIN N17   IOSTANDARD LVCMOS33 } [get_ports {sck}];#Sch name = JC3
-set_property -dict { PACKAGE_PIN P18   IOSTANDARD LVCMOS33 } [get_ports {cs_vector[0]}];#Sch name = JC4
-set_property -dict { PACKAGE_PIN L17   IOSTANDARD LVCMOS33 } [get_ports {cs_vector[1]}];#Sch name = JC7
-set_property -dict { PACKAGE_PIN M19   IOSTANDARD LVCMOS33 } [get_ports {cs_vector[2]}];#Sch name = JC8
-set_property -dict { PACKAGE_PIN P17   IOSTANDARD LVCMOS33 } [get_ports {cs_vector[3]}];#Sch name = JC9
-set_property -dict { PACKAGE_PIN R18   IOSTANDARD LVCMOS33 } [get_ports {cs_vector[4]}];#Sch name = JC10
+set_property -dict { PACKAGE_PIN K17   IOSTANDARD LVCMOS33 } [get_ports {JB[0]}];#Sch name = JC1
+set_property -dict { PACKAGE_PIN M18   IOSTANDARD LVCMOS33 } [get_ports {JB[1]}];#Sch name = JC2
+set_property -dict { PACKAGE_PIN N17   IOSTANDARD LVCMOS33 } [get_ports {JB[2]}];#Sch name = JC3
+set_property -dict { PACKAGE_PIN P18   IOSTANDARD LVCMOS33 } [get_ports {JB[3]}];#Sch name = JC4
+set_property -dict { PACKAGE_PIN L17   IOSTANDARD LVCMOS33 } [get_ports {JB[4]}];#Sch name = JC7
+set_property -dict { PACKAGE_PIN M19   IOSTANDARD LVCMOS33 } [get_ports {JB[5]}];#Sch name = JC8
+set_property -dict { PACKAGE_PIN P17   IOSTANDARD LVCMOS33 } [get_ports {JB[6]}];#Sch name = JC9
+set_property -dict { PACKAGE_PIN R18   IOSTANDARD LVCMOS33 } [get_ports {JB[7]}];#Sch name = JC10
 
 ##Pmod Header JXADC
 #set_property -dict { PACKAGE_PIN J3   IOSTANDARD LVCMOS33 } [get_ports {JXADC[0]}];#Sch name = XA1_P
@@ -135,12 +135,12 @@ set_property -dict { PACKAGE_PIN R18   IOSTANDARD LVCMOS33 } [get_ports {cs_vect
 
 
 ##USB HID (PS/2)
-set_property PACKAGE_PIN C17 [get_ports ps_clock]						
-set_property IOSTANDARD LVCMOS33 [get_ports ps_clock]
-set_property PULLUP true [get_ports ps_clock]
-set_property PACKAGE_PIN B17 [get_ports ps_data]					
-set_property IOSTANDARD LVCMOS33 [get_ports ps_data]	
-set_property PULLUP true [get_ports ps_data]
+#set_property PACKAGE_PIN C17 [get_ports ps_clock]						
+#set_property IOSTANDARD LVCMOS33 [get_ports ps_clock]
+#set_property PULLUP true [get_ports ps_clock]
+#set_property PACKAGE_PIN B17 [get_ports ps_data]					
+#set_property IOSTANDARD LVCMOS33 [get_ports ps_data]	
+#set_property PULLUP true [get_ports ps_data]
 
 ##Quad SPI Flash
 ##Note that CCLK_0 cannot be placed in 7 series devices. You can access it using the
