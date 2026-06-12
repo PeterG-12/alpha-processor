@@ -19,12 +19,13 @@ Custom 16-bit RISC processor inspired by RISC-V, MIPS and 8086 ideas with simpli
   
 ## GPIO pins demo
 
-                XX_RBW_RBW
-Nothing:        10_000_000 = 0x08
-Red:            10_100_100 = 0xA4
-Blue:           10_010_010 = 0x92
-White:          10_001_001 = 0x89
-White and Blue: 10_011_011 = 0x9B
+| State / Color | Binary Value (`XX_RBW_RBW`) | Hexadecimal Value |
+| :--- | :--- | :--- |
+| **Nothing** | `10_000_000` | `0x80` |
+| **Red** | `10_100_100` | `0xA4` |
+| **Blue** | `10_010_010` | `0x92` |
+| **White** | `10_001_001` | `0x89` |
+| **White and Blue** | `10_011_011` | `0x9B` |
 
 
 ![GPIO demo](images/demo.gif)
