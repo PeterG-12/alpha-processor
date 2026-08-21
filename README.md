@@ -39,3 +39,11 @@ Then open the project .xpr file in the directory alpha_processor created by Viva
 ![GPIO demo](images/demo.gif)
 
 
+## Logisim implementation
+
+The logisim-evolution implementation can be found in the logisim directory and can  be very helpful for educational, cycle-by-cycle execution tracing of a programs execution
+
+NOTE: The logisim implementation is not in full correspondance with the rtl
+
+![Image of ISA operations](images/isa-image.png)
+![Image of logisim implementation](images/logisim-image.png)
