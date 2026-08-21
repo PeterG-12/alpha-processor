@@ -20,7 +20,7 @@ Custom 16-bit RISC processor inspired by RISC-V, MIPS and 8086 ideas with simple
 
 To build the Vivado project use the command
 ```bash
-  vivado -mode batch -source build_project.tcl 
+vivado -mode batch -source build_project.tcl 
 ```
 
 Then open the project .xpr file in the directory alpha_processor created by Vivado
@@ -38,6 +38,16 @@ Then open the project .xpr file in the directory alpha_processor created by Viva
 
 ![GPIO demo](images/demo.gif)
 
+
+## Assembling programs
+
+
+The python asembler assembles instructions to both Logisim and VHDL rom format.
+It has no external dependencies it can be simply used as follows:
+
+```bash
+python assembler.py <assembly_textfile> <starting_address>
+```
 
 ## Logisim implementation
 
