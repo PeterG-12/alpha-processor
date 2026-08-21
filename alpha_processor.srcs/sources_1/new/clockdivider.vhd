@@ -21,7 +21,7 @@ begin
         pulse_out <= '0';
     elsif rising_edge(clk_in) then
         
-        if internal_count = FREQ then
+        if internal_count = FREQ - 1 then
             pulse_out <= '1';
             internal_count <= 0;
         else

@@ -1,6 +1,6 @@
 # VHDL implementation of custom ISA processor
 
-Custom 16-bit RISC processor inspired by RISC-V, MIPS and 8086 ideas with simplistic hardware interrupt system and GPIO registers implemented in VHDL, deployed and demonstrated on Basys 3 board.
+Custom 16-bit RISC processor inspired by RISC-V, MIPS and 8086 ideas with simple hardware interrupt system and GPIO registers implemented in VHDL, deployed and demonstrated on Basys 3 board.
 
 ## Technical details
 
@@ -16,6 +16,14 @@ Custom 16-bit RISC processor inspired by RISC-V, MIPS and 8086 ideas with simpli
   - Interrupt system can be enabled and disabled in code
   - Implementation for both external (e.g. emergency button) interrupt and timer interrupt
 
+## Building
+
+To build the Vivado project use the command
+```bash
+  vivado -mode batch -source build_project.tcl 
+```
+
+Then open the project .xpr file in the directory alpha_processor created by Vivado
   
 ## GPIO pins demo
 
@@ -29,3 +37,5 @@ Custom 16-bit RISC processor inspired by RISC-V, MIPS and 8086 ideas with simpli
 
 
 ![GPIO demo](images/demo.gif)
+
+
