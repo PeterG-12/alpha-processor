@@ -25,20 +25,20 @@ end main;
 
 architecture Behavioral of main is
     signal timer_pulse : std_logic;
-    signal out1 : std_logic_vector(15 downto 0);
-    signal in0 : std_logic_vector(15 downto 0);
+    signal out1 : std_logic_vector(15 downto 0) := (others => '0');
+    signal in0 : std_logic_vector(15 downto 0) := (others => '0');
     
     signal in1 : std_logic_vector(15 downto 0);
 
     -- Internal clock
     signal clk : std_logic;
 
-    signal reg_0_internal : std_logic_vector(15 downto 0);
+    signal reg_0_internal : std_logic_vector(15 downto 0) := (others => '0');
 
-    signal opcode : std_logic_vector(5 downto 0);
+    signal opcode : std_logic_vector(5 downto 0) := (others => '0');
 
     -- ROM address and content (address has 8 bits here)
-    signal romcont : std_logic_vector(31 downto 0);
+    signal romcont : std_logic_vector(31 downto 0) := (others => '0');
 
     signal iretsel : std_logic := '0';
     signal pciwe   : std_logic := '0';
@@ -78,118 +78,117 @@ architecture Behavioral of main is
 
 
     -- Program counter signals
-    signal pcsel_in :  std_logic_vector(15 downto 0);
-    signal pc_out :  std_logic_vector(15 downto 0);
+    signal pcsel_in :  std_logic_vector(15 downto 0) := (others => '0');
+    signal pc_out :  std_logic_vector(15 downto 0)  := (others => '0');
 
     -- RAM address selector MUX signal
-    signal adr_mux :  std_logic_vector(15 downto 0);
+    signal adr_mux :  std_logic_vector(15 downto 0)  := (others => '0');
 
     -- Memory addres junction signal
-    signal mem_addr  :  std_logic_vector(17 downto 0);
+    signal mem_addr  :  std_logic_vector(17 downto 0) := (others => '0');
 
 
     -- Data register signals
-    signal ram_mux_out : std_logic_vector(31 downto 0);
+    signal ram_mux_out : std_logic_vector(31 downto 0) := (others => '0');
 
-    signal dr_out :  std_logic_vector(31 downto 0);
+    signal dr_out :  std_logic_vector(31 downto 0) := (others => '0');
 
-    signal dr_low :  std_logic_vector(15 downto 0);
-    signal dr_high :  std_logic_vector(15 downto 0);
+    signal dr_low :  std_logic_vector(15 downto 0) := (others => '0');
+    signal dr_high :  std_logic_vector(15 downto 0) := (others => '0');
 
-    signal dr_low_low : std_logic_vector(7 downto 0);
-    signal dr_low_high : std_logic_vector(7 downto 0);
+    signal dr_low_low : std_logic_vector(7 downto 0) := (others => '0');
+    signal dr_low_high : std_logic_vector(7 downto 0) := (others => '0');
 
 
     -- Sign extension signals
-    signal seu_out : std_logic_vector(15 downto 0);
-    signal ses_out : std_logic_vector(15 downto 0);
+    signal seu_out : std_logic_vector(15 downto 0) := (others => '0');
+    signal ses_out : std_logic_vector(15 downto 0) := (others => '0');
 
     -- ALU helpers
 
-    signal alureg_low : std_logic_vector(15 downto 0);
-    signal alureg_high : std_logic_vector(15 downto 0);
-    signal alureg_out : std_logic_vector(31 downto 0);
-    signal alu_out : std_logic_vector(31 downto 0);
-    signal alu_out_low : std_logic_vector(15 downto 0);
+    signal alureg_low : std_logic_vector(15 downto 0) := (others => '0');
+    signal alureg_high : std_logic_vector(15 downto 0) := (others => '0');
+    signal alureg_out : std_logic_vector(31 downto 0) := (others => '0');
+    signal alu_out : std_logic_vector(31 downto 0) := (others => '0');
+    signal alu_out_low : std_logic_vector(15 downto 0) := (others => '0');
 
     -- Address register signals
-    signal ar_in : std_logic_vector(15 downto 0);
-    signal ar_out : std_logic_vector(15 downto 0);
+    signal ar_in : std_logic_vector(15 downto 0) := (others => '0');
+    signal ar_out : std_logic_vector(15 downto 0) := (others => '0');
 
     -- Instruction register
-    signal ir_out : std_logic_vector(31 downto 0);
+    signal ir_out : std_logic_vector(31 downto 0) := (others => '0');
 
-    signal radrx : std_logic_vector(4 downto 0);
-    signal radry : std_logic_vector(4 downto 0);
-    signal radrdest : std_logic_vector(4 downto 0);
+    signal radrx : std_logic_vector(4 downto 0) := (others => '0');
+    signal radry : std_logic_vector(4 downto 0) := (others => '0');
+    signal radrdest : std_logic_vector(4 downto 0) := (others => '0');
 
-    signal dest : std_logic_vector(4 downto 0);
+    signal dest : std_logic_vector(4 downto 0) := (others => '0');
 
 
     -- ALU
-    signal x_alu_a : std_logic_vector(15 downto 0);
-    signal y_alu_b : std_logic_vector(15 downto 0);
+    signal x_alu_a : std_logic_vector(15 downto 0) := (others => '0');
+    signal y_alu_b : std_logic_vector(15 downto 0) := (others => '0');
     signal alusby : std_logic;
 
 
     -- XY reg
-    signal xy_xout : std_logic_vector(15 downto 0);
-    signal xy_yout : std_logic_vector(15 downto 0);
-    signal xy_out : std_logic_vector(31 downto 0);
-    signal xy_in : std_logic_vector(31 downto 0);
+    signal xy_xout : std_logic_vector(15 downto 0) := (others => '0');
+    signal xy_yout : std_logic_vector(15 downto 0) := (others => '0');
+    signal xy_out : std_logic_vector(31 downto 0) := (others => '0');
+    signal xy_in : std_logic_vector(31 downto 0) := (others => '0');
 
     -- B select multiplexer
     signal bsmux : std_logic_vector(15 downto 0);
 
     -- RAM
     signal ramwe : std_logic;
-    signal ram_data : std_logic_vector(31 downto 0);
+    signal ram_data : std_logic_vector(31 downto 0) := (others => '0');
     signal ramw_neg : std_logic;
-    signal ram_out : std_logic_vector(31 downto 0);
+    signal ram_out : std_logic_vector(31 downto 0) := (others => '0');
 
     -- Regholder
-    signal holder_x : std_logic_vector(15 downto 0);
-    signal holder_y : std_logic_vector(15 downto 0);
+    signal holder_x : std_logic_vector(15 downto 0) := (others => '0');
+    signal holder_y : std_logic_vector(15 downto 0) := (others => '0');
 
     -- Memsel multiplexer
-    signal memsel_out : std_logic_vector(15 downto 0);
+    signal memsel_out : std_logic_vector(15 downto 0) := (others => '0');
 
     -- Register-write multiplexer
-    signal write_mux_out : std_logic_vector(15 downto 0);
+    signal write_mux_out : std_logic_vector(15 downto 0) := (others => '0');
 
 
     -- Memory RAM/ROM IR multiplexer
     signal memory_ir_mux_sel : std_logic_vector(0 downto 0);
 
     -- Peripheral output dmux outputs held in a single vector
-    signal mmap_consider_vector : std_logic_vector(0 downto 0);
-    signal mmap_sel : std_logic_vector(4 downto 0);
-    signal mmap_consider : std_logic;
+    signal mmap_consider_vector : std_logic_vector(0 downto 0) := (others => '0');
+    signal mmap_sel : std_logic_vector(4 downto 0) := (others => '0');
+    signal mmap_consider : std_logic := '0';
 
     -- From input peripheral multiplexer helpers
-    signal input_peripheral_mux_ir : std_logic_vector(31 downto 0);
+    signal input_peripheral_mux_ir : std_logic_vector(31 downto 0) := (others => '0');
 
     -- To output peripheral demultiplexer helpers
-    signal bsel_mux_out_to_output_peripheral_in : std_logic_vector(31 downto 0);
-    signal to_output_dmux_output_concatenated : std_logic_vector(63 downto 0);
+    signal bsel_mux_out_to_output_peripheral_in : std_logic_vector(31 downto 0) := (others => '0');
+    signal to_output_dmux_output_concatenated : std_logic_vector(63 downto 0) := (others => '0'); 
 
     -- Peripheral register holder
-    signal pr_datain : std_logic_vector(15 downto 0);
-    signal pr_dataout : std_logic_vector(15 downto 0);
-
+    signal pr_datain : std_logic_vector(15 downto 0) := (others => '0');
+    signal pr_dataout : std_logic_vector(15 downto 0) := (others => '0');
 
     -- Interrupt buffer
-    signal interrupt_buffer_out : std_logic;
+    signal interrupt_buffer_out : std_logic := '0';
 
     -- Interrupt store PCI
-    signal pciout : std_logic_vector(15 downto 0);
+    signal pciout : std_logic_vector(15 downto 0) := (others => '0');
     signal interrupt_address : std_logic_vector(15 downto 0) := "0000000011000000";
 
 
     -- GPIO signals
-    signal gpio_driver_signal : std_logic_vector(15 downto 0);
-    signal gpio_driver_signal_mode : std_logic_vector(7 downto 0);
-    signal gpio_driver_signal_data : std_logic_vector(7 downto 0);
+    signal gpio_driver_signal : std_logic_vector(15 downto 0) := (others => '0');
+    signal gpio_driver_signal_mode : std_logic_vector(7 downto 0) := (others => '0');
+    signal gpio_driver_signal_data : std_logic_vector(7 downto 0) := (others => '0');
 
     signal gpio_driver_signal_read_data_1 : std_logic_vector(7 downto 0);
     signal gpio_driver_signal_read_data_2 : std_logic_vector(7 downto 0);
@@ -201,7 +200,7 @@ architecture Behavioral of main is
     signal spi_address : std_logic_vector(2 downto 0) := "000";
     signal spi_data : std_logic_vector(7 downto 0) := "00000000";
 
-    signal out0 : std_logic_vector(15 downto 0) := "0000000000000000";
+    signal out0 : std_logic_vector(15 downto 0) := (others => '0');
 
 
     signal peripheral_interrupt0 : std_logic := '0';

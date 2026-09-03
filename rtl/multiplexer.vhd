@@ -15,7 +15,7 @@ end multiplexer;
 
 architecture Behavioral of multiplexer is
 
-    signal sel_int : integer range 0 to (2**SEL_NUMBER - 1);
+    signal sel_int : integer range 0 to (2**SEL_NUMBER - 1) := 0;
 
 begin
 

@@ -103,8 +103,13 @@ ENV/
 
 *.cf
 *.gtkw
+__pycache__/*
 __pycache__/
 *.ghw
+*.pyc
 
 # Simulation log files
 results.xml
+
+# Assembler programs
+assembler/*.hex

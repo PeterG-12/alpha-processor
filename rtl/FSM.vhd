@@ -97,9 +97,9 @@ architecture Structural of FSM is
     signal is_jump : std_logic;
     signal consider_jump : std_logic;
     signal jump_type_result : std_logic;
-    signal jump_address_select : std_logic_vector(1 downto 0);
-    signal ROM_data : std_logic_vector(DATA_WIDTH - 1 downto 0);
-    signal output_count : std_logic_vector(COUNT_BIT_WIDTH -1 downto 0);
+    signal jump_address_select : std_logic_vector(1 downto 0) := (others => '0');
+    signal ROM_data : std_logic_vector(DATA_WIDTH - 1 downto 0) := (others => '0');
+    signal output_count : std_logic_vector(COUNT_BIT_WIDTH -1 downto 0) := (others => '0');
 
     -- Multiplexer helpers
 
