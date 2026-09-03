@@ -90,3 +90,21 @@ project_1.srcs/sim_1/*
 *to_simulate_main.vhd
 alpha_processor
 alpha_processor/*
+
+
+
+#Python
+.venv/
+venv/
+env/
+ENV/
+*.venv
+*.pyc
+
+*.cf
+*.gtkw
+__pycache__/
+*.ghw
+
+# Simulation log files
+results.xml

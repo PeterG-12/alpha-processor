@@ -16,6 +16,9 @@ Custom 16-bit RISC processor inspired by RISC-V, MIPS and 8086 ideas with simple
   - Interrupt system can be enabled and disabled in code
   - Implementation for both external (e.g. emergency button) interrupt and timer interrupt
 
+  
+For detailed information about the ISA see the ```docs``` folder.
+  
 ## Building
 
 To build the Vivado project use the command
@@ -29,7 +32,7 @@ Then open the project .xpr file in the directory alpha_processor created by Viva
 
 | State / Color | Binary Value (`XX_RBW_RBW`) | Hexadecimal Value |
 | :--- | :--- | :--- |
-| **Nothing** | `10_000_000` | `0x80` |
+| **Empty** | `10_000_000` | `0x80` |
 | **Red** | `10_100_100` | `0xA4` |
 | **Blue** | `10_010_010` | `0x92` |
 | **White** | `10_001_001` | `0x89` |
@@ -40,7 +43,6 @@ Then open the project .xpr file in the directory alpha_processor created by Viva
 
 
 ## Assembling programs
-
 
 The python asembler assembles instructions to both Logisim and VHDL rom format.
 It has no external dependencies it can be simply used as follows:
@@ -55,5 +57,5 @@ The logisim-evolution implementation can be found in the logisim directory and c
 
 NOTE: The logisim implementation is not in full correspondance with the rtl
 
-![Image of ISA operations](images/isa-image.png)
 ![Image of logisim implementation](images/logisim-image.png)
+![Simple schamtic](images/simple_schematic.png)

@@ -2,40 +2,40 @@
 proc checkRequiredFiles { origin_dir} {
   set status true
   set files [list \
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/interrupt_buffer.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/dhtreceiver.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/to_simulate_main.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/usb_ps2_driver.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/ALU.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/DIV.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/interrupt_flag_module.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/FSM.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/FSM_ROM.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/FSM_counter.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/MMAP.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/RAM.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/ROM.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/Switchtossd.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/comparator.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/demultiplexer.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/flagjump_module.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/gpio_pindriver.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/gpio_driver.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/internal_interrupt_buffer.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/interrupt_controller.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/jumpconsider_module.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/multiplexer.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/mux2to1.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/mux4to1.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/mux8to1.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/reg32bit.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/peripherals_regs.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/register_holder.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/signextend.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/spi_driver.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/zeroextend.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/clockdivider.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sources_1/new/main.vhd"]"\
+ "[file normalize "$origin_dir/rtl/interrupt_buffer.vhd"]"\
+ "[file normalize "$origin_dir/rtl/dhtreceiver.vhd"]"\
+ "[file normalize "$origin_dir/rtl/to_simulate_main.vhd"]"\
+ "[file normalize "$origin_dir/rtl/usb_ps2_driver.vhd"]"\
+ "[file normalize "$origin_dir/rtl/ALU.vhd"]"\
+ "[file normalize "$origin_dir/rtl/DIV.vhd"]"\
+ "[file normalize "$origin_dir/rtl/interrupt_flag_module.vhd"]"\
+ "[file normalize "$origin_dir/rtl/FSM.vhd"]"\
+ "[file normalize "$origin_dir/rtl/FSM_ROM.vhd"]"\
+ "[file normalize "$origin_dir/rtl/FSM_counter.vhd"]"\
+ "[file normalize "$origin_dir/rtl/MMAP.vhd"]"\
+ "[file normalize "$origin_dir/rtl/RAM.vhd"]"\
+ "[file normalize "$origin_dir/rtl/ROM.vhd"]"\
+ "[file normalize "$origin_dir/rtl/Switchtossd.vhd"]"\
+ "[file normalize "$origin_dir/rtl/comparator.vhd"]"\
+ "[file normalize "$origin_dir/rtl/demultiplexer.vhd"]"\
+ "[file normalize "$origin_dir/rtl/flagjump_module.vhd"]"\
+ "[file normalize "$origin_dir/rtl/gpio_pindriver.vhd"]"\
+ "[file normalize "$origin_dir/rtl/gpio_driver.vhd"]"\
+ "[file normalize "$origin_dir/rtl/internal_interrupt_buffer.vhd"]"\
+ "[file normalize "$origin_dir/rtl/interrupt_controller.vhd"]"\
+ "[file normalize "$origin_dir/rtl/jumpconsider_module.vhd"]"\
+ "[file normalize "$origin_dir/rtl/multiplexer.vhd"]"\
+ "[file normalize "$origin_dir/rtl/mux2to1.vhd"]"\
+ "[file normalize "$origin_dir/rtl/mux4to1.vhd"]"\
+ "[file normalize "$origin_dir/rtl/mux8to1.vhd"]"\
+ "[file normalize "$origin_dir/rtl/reg32bit.vhd"]"\
+ "[file normalize "$origin_dir/rtl/peripherals_regs.vhd"]"\
+ "[file normalize "$origin_dir/rtl/register_holder.vhd"]"\
+ "[file normalize "$origin_dir/rtl/signextend.vhd"]"\
+ "[file normalize "$origin_dir/rtl/spi_driver.vhd"]"\
+ "[file normalize "$origin_dir/rtl/zeroextend.vhd"]"\
+ "[file normalize "$origin_dir/rtl/clockdivider.vhd"]"\
+ "[file normalize "$origin_dir/rtl/main.vhd"]"\
  "[file normalize "$origin_dir/alpha_processor.srcs/sim_1/new/FSMsim.vhd"]"\
  "[file normalize "$origin_dir/alpha_processor.srcs/sim_1/new/ROM_sim.vhd"]"\
  "[file normalize "$origin_dir/alpha_processor.srcs/sim_1/new/register_holder_simulation.vhd"]"\
@@ -180,40 +180,40 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 set obj [get_filesets sources_1]
 # Add local files from the original project (-no_copy_sources specified)
 set files [list \
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/interrupt_buffer.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/dhtreceiver.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/to_simulate_main.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/usb_ps2_driver.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/ALU.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/DIV.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/interrupt_flag_module.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/FSM.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/FSM_ROM.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/FSM_counter.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/MMAP.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/RAM.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/ROM.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/Switchtossd.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/comparator.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/demultiplexer.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/flagjump_module.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/gpio_pindriver.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/gpio_driver.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/internal_interrupt_buffer.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/interrupt_controller.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/jumpconsider_module.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/multiplexer.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/mux2to1.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/mux4to1.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/mux8to1.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/reg32bit.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/peripherals_regs.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/register_holder.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/signextend.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/spi_driver.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/zeroextend.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/clockdivider.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sources_1/new/main.vhd" ]\
+ [file normalize "${origin_dir}/rtl/interrupt_buffer.vhd" ]\
+ [file normalize "${origin_dir}/rtl/dhtreceiver.vhd" ]\
+ [file normalize "${origin_dir}/rtl/to_simulate_main.vhd" ]\
+ [file normalize "${origin_dir}/rtl/usb_ps2_driver.vhd" ]\
+ [file normalize "${origin_dir}/rtl/ALU.vhd" ]\
+ [file normalize "${origin_dir}/rtl/DIV.vhd" ]\
+ [file normalize "${origin_dir}/rtl/interrupt_flag_module.vhd" ]\
+ [file normalize "${origin_dir}/rtl/FSM.vhd" ]\
+ [file normalize "${origin_dir}/rtl/FSM_ROM.vhd" ]\
+ [file normalize "${origin_dir}/rtl/FSM_counter.vhd" ]\
+ [file normalize "${origin_dir}/rtl/MMAP.vhd" ]\
+ [file normalize "${origin_dir}/rtl/RAM.vhd" ]\
+ [file normalize "${origin_dir}/rtl/ROM.vhd" ]\
+ [file normalize "${origin_dir}/rtl/Switchtossd.vhd" ]\
+ [file normalize "${origin_dir}/rtl/comparator.vhd" ]\
+ [file normalize "${origin_dir}/rtl/demultiplexer.vhd" ]\
+ [file normalize "${origin_dir}/rtl/flagjump_module.vhd" ]\
+ [file normalize "${origin_dir}/rtl/gpio_pindriver.vhd" ]\
+ [file normalize "${origin_dir}/rtl/gpio_driver.vhd" ]\
+ [file normalize "${origin_dir}/rtl/internal_interrupt_buffer.vhd" ]\
+ [file normalize "${origin_dir}/rtl/interrupt_controller.vhd" ]\
+ [file normalize "${origin_dir}/rtl/jumpconsider_module.vhd" ]\
+ [file normalize "${origin_dir}/rtl/multiplexer.vhd" ]\
+ [file normalize "${origin_dir}/rtl/mux2to1.vhd" ]\
+ [file normalize "${origin_dir}/rtl/mux4to1.vhd" ]\
+ [file normalize "${origin_dir}/rtl/mux8to1.vhd" ]\
+ [file normalize "${origin_dir}/rtl/reg32bit.vhd" ]\
+ [file normalize "${origin_dir}/rtl/peripherals_regs.vhd" ]\
+ [file normalize "${origin_dir}/rtl/register_holder.vhd" ]\
+ [file normalize "${origin_dir}/rtl/signextend.vhd" ]\
+ [file normalize "${origin_dir}/rtl/spi_driver.vhd" ]\
+ [file normalize "${origin_dir}/rtl/zeroextend.vhd" ]\
+ [file normalize "${origin_dir}/rtl/clockdivider.vhd" ]\
+ [file normalize "${origin_dir}/rtl/main.vhd" ]\
 ]
 set added_files [add_files -fileset sources_1 $files]
 
