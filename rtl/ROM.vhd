@@ -25,7 +25,7 @@ signal sim_data : std_logic_vector(DATA_WIDTH - 1 downto 0) := (others => '0');
 
 begin
     
-    cut_address <= address(13 downto 0);
+    cut_address <= address(17 downto 16) & address(11 downto 0);
     output <= internal_memory((to_integer(unsigned(cut_address))));
 
     process(sim_we, sim_addr, sim_data)

@@ -44,7 +44,6 @@ async def load_program(dut : copra_stubs.Main, file_name : str):
             print(i, hexval)
     """
     
-
 @cocotb.test()
 async def test_0(dut : copra_stubs.Main):
     logger = cocotb.log
@@ -132,6 +131,26 @@ async def test_4(dut : copra_stubs.Main):
     await Timer(50, unit="ns")
     dut.reset.value = 0
     await load_program(dut, "test_programs/test4.hex")
+
+    await Timer(1000, unit="ns")
+
+    assert dut.register_holder_inst[f"registers({1})"].register_i.output.value == 0x600d, "Incorrect result"
+
+    clock_task.cancel()
+
+@cocotb.test()
+async def test_5(dut : copra_stubs.Main):
+    logger = cocotb.log
+    logger.setLevel(logging.INFO)
+    
+    KAT_dictionary = dict()
+    count = 0
+
+    clock_task = cocotb.start_soon(generate_clock(dut))
+    dut.reset.value = 1
+    await Timer(50, unit="ns")
+    dut.reset.value = 0
+    await load_program(dut, "test_programs/test5.hex")
 
     await Timer(1000, unit="ns")
 

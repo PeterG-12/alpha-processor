@@ -19,7 +19,7 @@ architecture Behavioral of mux4to1 is
 
 
 begin
-    process(in0, in1, sel)
+    process(in0, in1, in2, in3, sel)
     begin
         case sel is
             when "00" => mux_out <= in0;

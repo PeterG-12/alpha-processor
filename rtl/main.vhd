@@ -144,7 +144,7 @@ architecture Behavioral of main is
     -- RAM
     signal ramwe : std_logic;
     signal ram_data : std_logic_vector(31 downto 0) := (others => '0');
-    signal ramw_neg : std_logic;
+    signal ramread : std_logic;
     signal ram_out : std_logic_vector(31 downto 0) := (others => '0');
 
     -- Regholder
@@ -239,7 +239,7 @@ begin
     ssd_driver: entity work.Switchtossd
     port map(
         inputvec => reg_0_internal,
-        clk => clk_extrn, -- This does not need clock divider
+        clk => clk_extrn,
         reset => reset,
         an => an,
         seg => seg
@@ -282,8 +282,8 @@ begin
     )
     port map(
         sel => segsel,
-        in1 => cs_out,
-        in0 => ds_out,
+        in1 => ds_out,
+        in0 => cs_out,
         mux_out => seg_mux -- routes the segment bits to the RAM address
     );
 
@@ -458,7 +458,7 @@ begin
         BIT_WIDTH => 32
     )
      port map(
-        input => input_peripheral_mux_ir,
+        input => ram_mux_out,
         write_enable => irwe,
         clk => clk,
         reset => reset,
@@ -670,13 +670,13 @@ begin
         address => mem_addr,
         clk => clk,
         write_enable => ramwe,
-        output_enable => ramw_neg,
+        output_enable => ramread,
         data_input => ram_data,
         data_output => ram_out
     );
     -- Only write if not currently performin memory mapping
     ramwe <= (not mmap_consider) and ramw;
-    ramw_neg <= not ramw;
+ramread <= '1' when adrsel /= "00" else '0';
 
     -- Memory mapping module
     MMAP_inst: entity work.MMAP

@@ -1,44 +1,40 @@
 # Check file required for this script exists
-proc checkRequiredFiles { origin_dir} {
+proc checkRequiredFiles { origin_dir } {
   set status true
   set files [list \
- "[file normalize "$origin_dir/rtl/interrupt_buffer.vhd"]"\
- "[file normalize "$origin_dir/rtl/dhtreceiver.vhd"]"\
- "[file normalize "$origin_dir/rtl/to_simulate_main.vhd"]"\
- "[file normalize "$origin_dir/rtl/usb_ps2_driver.vhd"]"\
- "[file normalize "$origin_dir/rtl/ALU.vhd"]"\
- "[file normalize "$origin_dir/rtl/DIV.vhd"]"\
- "[file normalize "$origin_dir/rtl/interrupt_flag_module.vhd"]"\
- "[file normalize "$origin_dir/rtl/FSM.vhd"]"\
- "[file normalize "$origin_dir/rtl/FSM_ROM.vhd"]"\
- "[file normalize "$origin_dir/rtl/FSM_counter.vhd"]"\
- "[file normalize "$origin_dir/rtl/MMAP.vhd"]"\
- "[file normalize "$origin_dir/rtl/RAM.vhd"]"\
- "[file normalize "$origin_dir/rtl/ROM.vhd"]"\
- "[file normalize "$origin_dir/rtl/Switchtossd.vhd"]"\
- "[file normalize "$origin_dir/rtl/comparator.vhd"]"\
- "[file normalize "$origin_dir/rtl/demultiplexer.vhd"]"\
- "[file normalize "$origin_dir/rtl/flagjump_module.vhd"]"\
- "[file normalize "$origin_dir/rtl/gpio_pindriver.vhd"]"\
- "[file normalize "$origin_dir/rtl/gpio_driver.vhd"]"\
- "[file normalize "$origin_dir/rtl/internal_interrupt_buffer.vhd"]"\
- "[file normalize "$origin_dir/rtl/interrupt_controller.vhd"]"\
- "[file normalize "$origin_dir/rtl/jumpconsider_module.vhd"]"\
- "[file normalize "$origin_dir/rtl/multiplexer.vhd"]"\
- "[file normalize "$origin_dir/rtl/mux2to1.vhd"]"\
- "[file normalize "$origin_dir/rtl/mux4to1.vhd"]"\
- "[file normalize "$origin_dir/rtl/mux8to1.vhd"]"\
- "[file normalize "$origin_dir/rtl/reg32bit.vhd"]"\
- "[file normalize "$origin_dir/rtl/peripherals_regs.vhd"]"\
- "[file normalize "$origin_dir/rtl/register_holder.vhd"]"\
- "[file normalize "$origin_dir/rtl/signextend.vhd"]"\
- "[file normalize "$origin_dir/rtl/spi_driver.vhd"]"\
- "[file normalize "$origin_dir/rtl/zeroextend.vhd"]"\
- "[file normalize "$origin_dir/rtl/clockdivider.vhd"]"\
- "[file normalize "$origin_dir/rtl/main.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sim_1/new/FSMsim.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sim_1/new/ROM_sim.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sim_1/new/register_holder_simulation.vhd"]"\
+   "[file normalize "$origin_dir/rtl/interrupt_buffer.vhd"]"\
+   "[file normalize "$origin_dir/rtl/dhtreceiver.vhd"]"\
+   "[file normalize "$origin_dir/rtl/usb_ps2_driver.vhd"]"\
+   "[file normalize "$origin_dir/rtl/ALU.vhd"]"\
+   "[file normalize "$origin_dir/rtl/DIV.vhd"]"\
+   "[file normalize "$origin_dir/rtl/interrupt_flag_module.vhd"]"\
+   "[file normalize "$origin_dir/rtl/FSM.vhd"]"\
+   "[file normalize "$origin_dir/rtl/FSM_ROM.vhd"]"\
+   "[file normalize "$origin_dir/rtl/FSM_counter.vhd"]"\
+   "[file normalize "$origin_dir/rtl/MMAP.vhd"]"\
+   "[file normalize "$origin_dir/rtl/RAM.vhd"]"\
+   "[file normalize "$origin_dir/rtl/ROM.vhd"]"\
+   "[file normalize "$origin_dir/rtl/Switchtossd.vhd"]"\
+   "[file normalize "$origin_dir/rtl/comparator.vhd"]"\
+   "[file normalize "$origin_dir/rtl/demultiplexer.vhd"]"\
+   "[file normalize "$origin_dir/rtl/flagjump_module.vhd"]"\
+   "[file normalize "$origin_dir/rtl/gpio_pindriver.vhd"]"\
+   "[file normalize "$origin_dir/rtl/gpio_driver.vhd"]"\
+   "[file normalize "$origin_dir/rtl/internal_interrupt_buffer.vhd"]"\
+   "[file normalize "$origin_dir/rtl/interrupt_controller.vhd"]"\
+   "[file normalize "$origin_dir/rtl/jumpconsider_module.vhd"]"\
+   "[file normalize "$origin_dir/rtl/multiplexer.vhd"]"\
+   "[file normalize "$origin_dir/rtl/mux2to1.vhd"]"\
+   "[file normalize "$origin_dir/rtl/mux4to1.vhd"]"\
+   "[file normalize "$origin_dir/rtl/mux8to1.vhd"]"\
+   "[file normalize "$origin_dir/rtl/reg32bit.vhd"]"\
+   "[file normalize "$origin_dir/rtl/peripherals_regs.vhd"]"\
+   "[file normalize "$origin_dir/rtl/register_holder.vhd"]"\
+   "[file normalize "$origin_dir/rtl/signextend.vhd"]"\
+   "[file normalize "$origin_dir/rtl/spi_driver.vhd"]"\
+   "[file normalize "$origin_dir/rtl/zeroextend.vhd"]"\
+   "[file normalize "$origin_dir/rtl/clockdivider.vhd"]"\
+   "[file normalize "$origin_dir/rtl/main.vhd"]"\
   ]
   foreach ifile $files {
     if { ![file isfile $ifile] } {
@@ -48,14 +44,7 @@ proc checkRequiredFiles { origin_dir} {
   }
 
   set files [list \
- "[file normalize "$origin_dir/alpha_processor.srcs/constrs_1/imports/constraints_1/Basys3.xdc"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sim_1/imports/project_1/project_1.srcs/sim_1/new/ps2sim.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sim_1/imports/project_1/project_1.srcs/sim_1/new/DIVtest.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sim_1/imports/project_1/project_1.srcs/sim_1/new/alusim.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sim_1/imports/project_1/project_1.srcs/sim_1/new/tb_MMAP.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sim_1/imports/project_1/project_1.srcs/sim_1/new/tb_peripherals_regs.vhd"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sim_1/imports/project_1/mainsim_behav1.wcfg"]"\
- "[file normalize "$origin_dir/alpha_processor.srcs/sim_1/imports/project_1/project_1.srcs/sim_1/new/mainsim.vhd"]"\
+   "[file normalize "$origin_dir/alpha_processor.srcs/constrs_1/imports/constraints_1/Basys3.xdc"]"\
   ]
   foreach ifile $files {
     if { ![file isfile $ifile] } {
@@ -66,6 +55,7 @@ proc checkRequiredFiles { origin_dir} {
 
   return $status
 }
+
 # Set the reference directory for source file relative paths (by default the value is script directory path)
 set origin_dir "."
 
@@ -99,16 +89,16 @@ proc print_help {} {
   puts "$script_file -tclargs \[--project_name <name>\]"
   puts "$script_file -tclargs \[--help\]\n"
   puts "Usage:"
-  puts "Name                   Description"
+  puts "Name                    Description"
   puts "-------------------------------------------------------------------------"
   puts "\[--origin_dir <path>\]  Determine source file paths wrt this path. Default"
-  puts "                       origin_dir path value is \".\", otherwise, the value"
-  puts "                       that was set with the \"-paths_relative_to\" switch"
-  puts "                       when this script was generated.\n"
+  puts "                        origin_dir path value is \".\", otherwise, the value"
+  puts "                        that was set with the \"-paths_relative_to\" switch"
+  puts "                        when this script was generated.\n"
   puts "\[--project_name <name>\] Create project with the specified name. Default"
-  puts "                       name is the name of the project from where this"
-  puts "                       script was generated.\n"
-  puts "\[--help\]               Print help information for this script"
+  puts "                        name is the name of the project from where this"
+  puts "                        script was generated.\n"
+  puts "\[--help\]                Print help information for this script"
   puts "-------------------------------------------------------------------------\n"
   exit 0
 }
@@ -137,9 +127,9 @@ set orig_proj_dir "[file normalize "$origin_dir"]"
 set validate_required 0
 if { $validate_required } {
   if { [checkRequiredFiles $origin_dir] } {
-    puts "Tcl file $script_file is valid. All files required for project creation is accesable. "
+    puts "Tcl file $script_file is valid. All files required for project creation is accessible. "
   } else {
-    puts "Tcl file $script_file is not valid. Not all files required for project creation is accesable. "
+    puts "Tcl file $script_file is not valid. Not all files required for project creation is accessible. "
     return
   }
 }
@@ -149,9 +139,6 @@ create_project ${_xil_proj_name_} ./${_xil_proj_name_} -part xc7a35tcpg236-1
 
 # Set the directory path for the new project
 set proj_dir [get_property directory [current_project]]
-
-# Reconstruct message rules
-# None
 
 # Set project properties
 set obj [current_project]
@@ -163,13 +150,8 @@ set_property -name "ip_output_repo" -value "$proj_dir/${_xil_proj_name_}.cache/i
 set_property -name "mem.enable_memory_map_generation" -value "1" -objects $obj
 set_property -name "part" -value "xc7a35tcpg236-1" -objects $obj
 set_property -name "revised_directory_structure" -value "1" -objects $obj
-set_property -name "sim.central_dir" -value "$proj_dir/${_xil_proj_name_}.ip_user_files" -objects $obj
-set_property -name "sim.ip.auto_export_scripts" -value "1" -objects $obj
-set_property -name "simulator_language" -value "VHDL" -objects $obj
-set_property -name "sim_compile_state" -value "1" -objects $obj
 set_property -name "target_language" -value "VHDL" -objects $obj
 set_property -name "use_inline_hdl_ip" -value "1" -objects $obj
-set_property -name "webtalk.xsim_launch_sim" -value "135" -objects $obj
 
 # Create 'sources_1' fileset (if not found)
 if {[string equal [get_filesets -quiet sources_1] ""]} {
@@ -182,7 +164,6 @@ set obj [get_filesets sources_1]
 set files [list \
  [file normalize "${origin_dir}/rtl/interrupt_buffer.vhd" ]\
  [file normalize "${origin_dir}/rtl/dhtreceiver.vhd" ]\
- [file normalize "${origin_dir}/rtl/to_simulate_main.vhd" ]\
  [file normalize "${origin_dir}/rtl/usb_ps2_driver.vhd" ]\
  [file normalize "${origin_dir}/rtl/ALU.vhd" ]\
  [file normalize "${origin_dir}/rtl/DIV.vhd" ]\
@@ -217,146 +198,138 @@ set files [list \
 ]
 set added_files [add_files -fileset sources_1 $files]
 
-# Set 'sources_1' fileset file properties for remote files
-# None
-
 # Set 'sources_1' fileset file properties for local files
-set file "new/interrupt_buffer.vhd"
+set file "interrupt_buffer.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/dhtreceiver.vhd"
+set file "dhtreceiver.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/to_simulate_main.vhd"
+set file "usb_ps2_driver.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/usb_ps2_driver.vhd"
+set file "ALU.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/ALU.vhd"
+set file "DIV.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/DIV.vhd"
+set file "interrupt_flag_module.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/interrupt_flag_module.vhd"
+set file "FSM.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/FSM.vhd"
+set file "FSM_ROM.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/FSM_ROM.vhd"
+set file "FSM_counter.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/FSM_counter.vhd"
+set file "MMAP.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/MMAP.vhd"
+set file "RAM.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/RAM.vhd"
+set file "ROM.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/ROM.vhd"
+set file "Switchtossd.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/Switchtossd.vhd"
+set file "comparator.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/comparator.vhd"
+set file "demultiplexer.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/demultiplexer.vhd"
+set file "flagjump_module.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/flagjump_module.vhd"
+set file "gpio_pindriver.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/gpio_pindriver.vhd"
+set file "gpio_driver.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/gpio_driver.vhd"
+set file "internal_interrupt_buffer.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/internal_interrupt_buffer.vhd"
+set file "interrupt_controller.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/interrupt_controller.vhd"
+set file "jumpconsider_module.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/jumpconsider_module.vhd"
+set file "multiplexer.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/multiplexer.vhd"
+set file "mux2to1.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/mux2to1.vhd"
+set file "mux4to1.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/mux4to1.vhd"
+set file "mux8to1.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/mux8to1.vhd"
+set file "reg32bit.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/reg32bit.vhd"
+set file "peripherals_regs.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/peripherals_regs.vhd"
+set file "register_holder.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/register_holder.vhd"
+set file "signextend.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/signextend.vhd"
+set file "spi_driver.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/spi_driver.vhd"
+set file "zeroextend.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "new/zeroextend.vhd"
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "VHDL" -objects $file_obj
-
-set file "new/clockdivider.vhd"
+set file "clockdivider.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL 2008" -objects $file_obj
 
-set file "new/main.vhd"
+set file "main.vhd"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL 2008" -objects $file_obj
-
 
 # Set 'sources_1' fileset properties
 set obj [get_filesets sources_1]
@@ -384,110 +357,20 @@ set_property -name "file_type" -value "XDC" -objects $file_obj
 set obj [get_filesets constrs_1]
 set_property -name "target_part" -value "xc7a35tcpg236-1" -objects $obj
 
-# Create 'sim_1' fileset (if not found)
-if {[string equal [get_filesets -quiet sim_1] ""]} {
-  create_fileset -simset sim_1
+# Create 'utils_1' fileset (if not found)
+if {[string equal [get_filesets -quiet utils_1] ""]} {
+  create_fileset -utilset utils_1
 }
-
-# Set 'sim_1' fileset object
-set obj [get_filesets sim_1]
-set files [list \
- [file normalize "${origin_dir}/alpha_processor.srcs/sim_1/imports/project_1/project_1.srcs/sim_1/new/ps2sim.vhd"] \
- [file normalize "${origin_dir}/alpha_processor.srcs/sim_1/imports/project_1/project_1.srcs/sim_1/new/DIVtest.vhd"] \
- [file normalize "${origin_dir}/alpha_processor.srcs/sim_1/imports/project_1/project_1.srcs/sim_1/new/alusim.vhd"] \
- [file normalize "${origin_dir}/alpha_processor.srcs/sim_1/imports/project_1/project_1.srcs/sim_1/new/tb_MMAP.vhd"] \
- [file normalize "${origin_dir}/alpha_processor.srcs/sim_1/imports/project_1/project_1.srcs/sim_1/new/tb_peripherals_regs.vhd"] \
- [file normalize "${origin_dir}/alpha_processor.srcs/sim_1/imports/project_1/mainsim_behav1.wcfg"] \
- [file normalize "${origin_dir}/alpha_processor.srcs/sim_1/imports/project_1/project_1.srcs/sim_1/new/mainsim.vhd"] \
-]
-add_files -norecurse -fileset $obj $files
-
-# Add local files from the original project (-no_copy_sources specified)
-set files [list \
- [file normalize "${origin_dir}/alpha_processor.srcs/sim_1/new/FSMsim.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sim_1/new/ROM_sim.vhd" ]\
- [file normalize "${origin_dir}/alpha_processor.srcs/sim_1/new/register_holder_simulation.vhd" ]\
-]
-set added_files [add_files -fileset sim_1 $files]
-
-# Set 'sim_1' fileset file properties for remote files
-set file "$origin_dir/alpha_processor.srcs/sim_1/imports/project_1/project_1.srcs/sim_1/new/ps2sim.vhd"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-set_property -name "file_type" -value "VHDL" -objects $file_obj
-
-set file "$origin_dir/alpha_processor.srcs/sim_1/imports/project_1/project_1.srcs/sim_1/new/DIVtest.vhd"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-set_property -name "file_type" -value "VHDL" -objects $file_obj
-
-set file "$origin_dir/alpha_processor.srcs/sim_1/imports/project_1/project_1.srcs/sim_1/new/alusim.vhd"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-set_property -name "file_type" -value "VHDL" -objects $file_obj
-
-set file "$origin_dir/alpha_processor.srcs/sim_1/imports/project_1/project_1.srcs/sim_1/new/tb_MMAP.vhd"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-set_property -name "file_type" -value "VHDL" -objects $file_obj
-
-set file "$origin_dir/alpha_processor.srcs/sim_1/imports/project_1/project_1.srcs/sim_1/new/tb_peripherals_regs.vhd"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-set_property -name "file_type" -value "VHDL" -objects $file_obj
-
-set file "$origin_dir/alpha_processor.srcs/sim_1/imports/project_1/project_1.srcs/sim_1/new/mainsim.vhd"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-set_property -name "file_type" -value "VHDL" -objects $file_obj
-
-
-# Set 'sim_1' fileset file properties for local files
-set file "new/FSMsim.vhd"
-set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-set_property -name "file_type" -value "VHDL" -objects $file_obj
-
-set file "new/ROM_sim.vhd"
-set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-set_property -name "file_type" -value "VHDL" -objects $file_obj
-
-set file "new/register_holder_simulation.vhd"
-set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-set_property -name "file_type" -value "VHDL" -objects $file_obj
-
-
-# Set 'sim_1' fileset properties
-set obj [get_filesets sim_1]
-set_property -name "sim_wrapper_top" -value "1" -objects $obj
-set_property -name "top" -value "mainsim" -objects $obj
-set_property -name "top_auto_set" -value "0" -objects $obj
-set_property -name "top_lib" -value "xil_defaultlib" -objects $obj
-
-# Set 'utils_1' fileset object
-set obj [get_filesets utils_1]
-# Add local files from the original project (-no_copy_sources specified)
-set added_files [add_files -fileset utils_1 $files]
-
-# Set 'utils_1' fileset file properties for remote files
-# None
-
-# Set 'utils_1' fileset file properties for local files
-set file_obj [get_files -of_objects [get_filesets utils_1] [list "*$file"]]
-set_property -name "netlist_only" -value "0" -objects $file_obj
-
-
-# Set 'utils_1' fileset properties
-set obj [get_filesets utils_1]
 
 set idrFlowPropertiesConstraints ""
 catch {
- set idrFlowPropertiesConstraints [get_param runs.disableIDRFlowPropertyConstraints]
- set_param runs.disableIDRFlowPropertyConstraints 1
+  set idrFlowPropertiesConstraints [get_param runs.disableIDRFlowPropertyConstraints]
+  set_param runs.disableIDRFlowPropertyConstraints 1
 }
 
 # Create 'synth_1' run (if not found)
 if {[string equal [get_runs -quiet synth_1] ""]} {
-    create_run -name synth_1 -part xc7a35tcpg236-1 -flow {Vivado Synthesis 2025} -strategy "Vivado Synthesis Defaults" -report_strategy {No Reports} -constrset constrs_1
+  create_run -name synth_1 -part xc7a35tcpg236-1 -flow {Vivado Synthesis 2025} -strategy "Vivado Synthesis Defaults" -report_strategy {No Reports} -constrset constrs_1
 } else {
   set_property strategy "Vivado Synthesis Defaults" [get_runs synth_1]
   set_property flow "Vivado Synthesis 2025" [get_runs synth_1]
@@ -496,25 +379,23 @@ set obj [get_runs synth_1]
 set_property set_report_strategy_name 1 $obj
 set_property report_strategy {Vivado Synthesis Default Reports} $obj
 set_property set_report_strategy_name 0 $obj
+
 # Create 'synth_1_synth_report_utilization_0' report (if not found)
 if { [ string equal [get_report_configs -of_objects [get_runs synth_1] synth_1_synth_report_utilization_0] "" ] } {
   create_report_config -report_name synth_1_synth_report_utilization_0 -report_type report_utilization:1.0 -steps synth_design -runs synth_1
 }
-set obj [get_report_configs -of_objects [get_runs synth_1] synth_1_synth_report_utilization_0]
-if { $obj != "" } {
 
-}
 set obj [get_runs synth_1]
 set_property -name "part" -value "xc7a35tcpg236-1" -objects $obj
 set_property -name "auto_incremental_checkpoint" -value "1" -objects $obj
 set_property -name "strategy" -value "Vivado Synthesis Defaults" -objects $obj
 
-# set the current synth run
+# Set the current synth run
 current_run -synthesis [get_runs synth_1]
 
 # Create 'impl_1' run (if not found)
 if {[string equal [get_runs -quiet impl_1] ""]} {
-    create_run -name impl_1 -part xc7a35tcpg236-1 -flow {Vivado Implementation 2025} -strategy "Vivado Implementation Defaults" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
+  create_run -name impl_1 -part xc7a35tcpg236-1 -flow {Vivado Implementation 2025} -strategy "Vivado Implementation Defaults" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
 } else {
   set_property strategy "Vivado Implementation Defaults" [get_runs impl_1]
   set_property flow "Vivado Implementation 2025" [get_runs impl_1]
@@ -523,218 +404,196 @@ set obj [get_runs impl_1]
 set_property set_report_strategy_name 1 $obj
 set_property report_strategy {Vivado Implementation Default Reports} $obj
 set_property set_report_strategy_name 0 $obj
+
 # Create 'impl_1_init_report_timing_summary_0' report (if not found)
 if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_init_report_timing_summary_0] "" ] } {
   create_report_config -report_name impl_1_init_report_timing_summary_0 -report_type report_timing_summary:1.0 -steps init_design -runs impl_1
 }
 set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_init_report_timing_summary_0]
 if { $obj != "" } {
-set_property -name "is_enabled" -value "0" -objects $obj
-set_property -name "options.max_paths" -value "10" -objects $obj
-set_property -name "options.report_unconstrained" -value "1" -objects $obj
-
+  set_property -name "is_enabled" -value "0" -objects $obj
+  set_property -name "options.max_paths" -value "10" -objects $obj
+  set_property -name "options.report_unconstrained" -value "1" -objects $obj
 }
+
 # Create 'impl_1_opt_report_drc_0' report (if not found)
 if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_opt_report_drc_0] "" ] } {
   create_report_config -report_name impl_1_opt_report_drc_0 -report_type report_drc:1.0 -steps opt_design -runs impl_1
 }
-set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_opt_report_drc_0]
-if { $obj != "" } {
 
-}
 # Create 'impl_1_opt_report_timing_summary_0' report (if not found)
 if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_opt_report_timing_summary_0] "" ] } {
   create_report_config -report_name impl_1_opt_report_timing_summary_0 -report_type report_timing_summary:1.0 -steps opt_design -runs impl_1
 }
 set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_opt_report_timing_summary_0]
 if { $obj != "" } {
-set_property -name "is_enabled" -value "0" -objects $obj
-set_property -name "options.max_paths" -value "10" -objects $obj
-set_property -name "options.report_unconstrained" -value "1" -objects $obj
-
+  set_property -name "is_enabled" -value "0" -objects $obj
+  set_property -name "options.max_paths" -value "10" -objects $obj
+  set_property -name "options.report_unconstrained" -value "1" -objects $obj
 }
+
 # Create 'impl_1_power_opt_report_timing_summary_0' report (if not found)
 if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_power_opt_report_timing_summary_0] "" ] } {
   create_report_config -report_name impl_1_power_opt_report_timing_summary_0 -report_type report_timing_summary:1.0 -steps power_opt_design -runs impl_1
 }
 set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_power_opt_report_timing_summary_0]
 if { $obj != "" } {
-set_property -name "is_enabled" -value "0" -objects $obj
-set_property -name "options.max_paths" -value "10" -objects $obj
-set_property -name "options.report_unconstrained" -value "1" -objects $obj
-
+  set_property -name "is_enabled" -value "0" -objects $obj
+  set_property -name "options.max_paths" -value "10" -objects $obj
+  set_property -name "options.report_unconstrained" -value "1" -objects $obj
 }
+
 # Create 'impl_1_place_report_io_0' report (if not found)
 if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_io_0] "" ] } {
   create_report_config -report_name impl_1_place_report_io_0 -report_type report_io:1.0 -steps place_design -runs impl_1
 }
-set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_io_0]
-if { $obj != "" } {
 
-}
 # Create 'impl_1_place_report_utilization_0' report (if not found)
 if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_utilization_0] "" ] } {
   create_report_config -report_name impl_1_place_report_utilization_0 -report_type report_utilization:1.0 -steps place_design -runs impl_1
 }
-set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_utilization_0]
-if { $obj != "" } {
 
-}
 # Create 'impl_1_place_report_control_sets_0' report (if not found)
 if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_control_sets_0] "" ] } {
   create_report_config -report_name impl_1_place_report_control_sets_0 -report_type report_control_sets:1.0 -steps place_design -runs impl_1
 }
 set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_control_sets_0]
 if { $obj != "" } {
-set_property -name "options.verbose" -value "1" -objects $obj
-
+  set_property -name "options.verbose" -value "1" -objects $obj
 }
+
 # Create 'impl_1_place_report_incremental_reuse_0' report (if not found)
 if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_incremental_reuse_0] "" ] } {
   create_report_config -report_name impl_1_place_report_incremental_reuse_0 -report_type report_incremental_reuse:1.0 -steps place_design -runs impl_1
 }
 set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_incremental_reuse_0]
 if { $obj != "" } {
-set_property -name "is_enabled" -value "0" -objects $obj
-
+  set_property -name "is_enabled" -value "0" -objects $obj
 }
+
 # Create 'impl_1_place_report_incremental_reuse_1' report (if not found)
 if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_incremental_reuse_1] "" ] } {
   create_report_config -report_name impl_1_place_report_incremental_reuse_1 -report_type report_incremental_reuse:1.0 -steps place_design -runs impl_1
 }
 set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_incremental_reuse_1]
 if { $obj != "" } {
-set_property -name "is_enabled" -value "0" -objects $obj
-
+  set_property -name "is_enabled" -value "0" -objects $obj
 }
+
 # Create 'impl_1_place_report_timing_summary_0' report (if not found)
 if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_timing_summary_0] "" ] } {
   create_report_config -report_name impl_1_place_report_timing_summary_0 -report_type report_timing_summary:1.0 -steps place_design -runs impl_1
 }
 set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_timing_summary_0]
 if { $obj != "" } {
-set_property -name "is_enabled" -value "0" -objects $obj
-set_property -name "options.max_paths" -value "10" -objects $obj
-set_property -name "options.report_unconstrained" -value "1" -objects $obj
-
+  set_property -name "is_enabled" -value "0" -objects $obj
+  set_property -name "options.max_paths" -value "10" -objects $obj
+  set_property -name "options.report_unconstrained" -value "1" -objects $obj
 }
+
 # Create 'impl_1_post_place_power_opt_report_timing_summary_0' report (if not found)
 if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_post_place_power_opt_report_timing_summary_0] "" ] } {
   create_report_config -report_name impl_1_post_place_power_opt_report_timing_summary_0 -report_type report_timing_summary:1.0 -steps post_place_power_opt_design -runs impl_1
 }
 set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_post_place_power_opt_report_timing_summary_0]
 if { $obj != "" } {
-set_property -name "is_enabled" -value "0" -objects $obj
-set_property -name "options.max_paths" -value "10" -objects $obj
-set_property -name "options.report_unconstrained" -value "1" -objects $obj
-
+  set_property -name "is_enabled" -value "0" -objects $obj
+  set_property -name "options.max_paths" -value "10" -objects $obj
+  set_property -name "options.report_unconstrained" -value "1" -objects $obj
 }
+
 # Create 'impl_1_phys_opt_report_timing_summary_0' report (if not found)
 if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_phys_opt_report_timing_summary_0] "" ] } {
   create_report_config -report_name impl_1_phys_opt_report_timing_summary_0 -report_type report_timing_summary:1.0 -steps phys_opt_design -runs impl_1
 }
 set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_phys_opt_report_timing_summary_0]
 if { $obj != "" } {
-set_property -name "is_enabled" -value "0" -objects $obj
-set_property -name "options.max_paths" -value "10" -objects $obj
-set_property -name "options.report_unconstrained" -value "1" -objects $obj
-
+  set_property -name "is_enabled" -value "0" -objects $obj
+  set_property -name "options.max_paths" -value "10" -objects $obj
+  set_property -name "options.report_unconstrained" -value "1" -objects $obj
 }
+
 # Create 'impl_1_route_report_drc_0' report (if not found)
 if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_drc_0] "" ] } {
   create_report_config -report_name impl_1_route_report_drc_0 -report_type report_drc:1.0 -steps route_design -runs impl_1
 }
-set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_drc_0]
-if { $obj != "" } {
 
-}
 # Create 'impl_1_route_report_methodology_0' report (if not found)
 if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_methodology_0] "" ] } {
   create_report_config -report_name impl_1_route_report_methodology_0 -report_type report_methodology:1.0 -steps route_design -runs impl_1
 }
-set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_methodology_0]
-if { $obj != "" } {
 
-}
 # Create 'impl_1_route_report_power_0' report (if not found)
 if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_power_0] "" ] } {
   create_report_config -report_name impl_1_route_report_power_0 -report_type report_power:1.0 -steps route_design -runs impl_1
 }
-set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_power_0]
-if { $obj != "" } {
 
-}
 # Create 'impl_1_route_report_route_status_0' report (if not found)
 if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_route_status_0] "" ] } {
   create_report_config -report_name impl_1_route_report_route_status_0 -report_type report_route_status:1.0 -steps route_design -runs impl_1
 }
-set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_route_status_0]
-if { $obj != "" } {
 
-}
 # Create 'impl_1_route_report_timing_summary_0' report (if not found)
 if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_timing_summary_0] "" ] } {
   create_report_config -report_name impl_1_route_report_timing_summary_0 -report_type report_timing_summary:1.0 -steps route_design -runs impl_1
 }
 set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_timing_summary_0]
 if { $obj != "" } {
-set_property -name "options.max_paths" -value "10" -objects $obj
-set_property -name "options.routable_nets" -value "1" -objects $obj
-set_property -name "options.report_unconstrained" -value "1" -objects $obj
-
+  set_property -name "options.max_paths" -value "10" -objects $obj
+  set_property -name "options.routable_nets" -value "1" -objects $obj
+  set_property -name "options.report_unconstrained" -value "1" -objects $obj
 }
+
 # Create 'impl_1_route_report_incremental_reuse_0' report (if not found)
 if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_incremental_reuse_0] "" ] } {
   create_report_config -report_name impl_1_route_report_incremental_reuse_0 -report_type report_incremental_reuse:1.0 -steps route_design -runs impl_1
 }
 set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_incremental_reuse_0]
 if { $obj != "" } {
-
+  set_property -name "is_enabled" -value "0" -objects $obj
 }
+
 # Create 'impl_1_route_report_clock_utilization_0' report (if not found)
 if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_clock_utilization_0] "" ] } {
   create_report_config -report_name impl_1_route_report_clock_utilization_0 -report_type report_clock_utilization:1.0 -steps route_design -runs impl_1
 }
-set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_clock_utilization_0]
-if { $obj != "" } {
 
-}
 # Create 'impl_1_route_report_bus_skew_0' report (if not found)
 if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_bus_skew_0] "" ] } {
   create_report_config -report_name impl_1_route_report_bus_skew_0 -report_type report_bus_skew:1.1 -steps route_design -runs impl_1
 }
 set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_bus_skew_0]
 if { $obj != "" } {
-set_property -name "options.warn_on_violation" -value "1" -objects $obj
-
+  set_property -name "options.warn_on_violation" -value "1" -objects $obj
 }
+
 # Create 'impl_1_post_route_phys_opt_report_timing_summary_0' report (if not found)
 if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_post_route_phys_opt_report_timing_summary_0] "" ] } {
   create_report_config -report_name impl_1_post_route_phys_opt_report_timing_summary_0 -report_type report_timing_summary:1.0 -steps post_route_phys_opt_design -runs impl_1
 }
 set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_post_route_phys_opt_report_timing_summary_0]
 if { $obj != "" } {
-set_property -name "options.max_paths" -value "10" -objects $obj
-set_property -name "options.report_unconstrained" -value "1" -objects $obj
-set_property -name "options.warn_on_violation" -value "1" -objects $obj
-
+  set_property -name "options.max_paths" -value "10" -objects $obj
+  set_property -name "options.report_unconstrained" -value "1" -objects $obj
+  set_property -name "options.warn_on_violation" -value "1" -objects $obj
 }
+
 # Create 'impl_1_post_route_phys_opt_report_bus_skew_0' report (if not found)
 if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_post_route_phys_opt_report_bus_skew_0] "" ] } {
   create_report_config -report_name impl_1_post_route_phys_opt_report_bus_skew_0 -report_type report_bus_skew:1.1 -steps post_route_phys_opt_design -runs impl_1
 }
 set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_post_route_phys_opt_report_bus_skew_0]
 if { $obj != "" } {
-set_property -name "options.warn_on_violation" -value "1" -objects $obj
-
+  set_property -name "options.warn_on_violation" -value "1" -objects $obj
 }
+
 set obj [get_runs impl_1]
 set_property -name "part" -value "xc7a35tcpg236-1" -objects $obj
 set_property -name "strategy" -value "Vivado Implementation Defaults" -objects $obj
 set_property -name "steps.write_bitstream.args.readback_file" -value "0" -objects $obj
 set_property -name "steps.write_bitstream.args.verbose" -value "0" -objects $obj
 
-# set the current impl run
+# Set the current impl run
 current_run -implementation [get_runs impl_1]
 catch {
  if { $idrFlowPropertiesConstraints != {} } {
@@ -743,37 +602,38 @@ catch {
 }
 
 puts "INFO: Project created:${_xil_proj_name_}"
+
 # Create 'drc_1' gadget (if not found)
 if {[string equal [get_dashboard_gadgets  [ list "drc_1" ] ] ""]} {
-create_dashboard_gadget -name {drc_1} -type drc
+  create_dashboard_gadget -name {drc_1} -type drc
 }
 set obj [get_dashboard_gadgets [ list "drc_1" ] ]
 set_property -name "reports" -value "impl_1#impl_1_route_report_drc_0" -objects $obj
 
 # Create 'methodology_1' gadget (if not found)
 if {[string equal [get_dashboard_gadgets  [ list "methodology_1" ] ] ""]} {
-create_dashboard_gadget -name {methodology_1} -type methodology
+  create_dashboard_gadget -name {methodology_1} -type methodology
 }
 set obj [get_dashboard_gadgets [ list "methodology_1" ] ]
 set_property -name "reports" -value "impl_1#impl_1_route_report_methodology_0" -objects $obj
 
 # Create 'power_1' gadget (if not found)
 if {[string equal [get_dashboard_gadgets  [ list "power_1" ] ] ""]} {
-create_dashboard_gadget -name {power_1} -type power
+  create_dashboard_gadget -name {power_1} -type power
 }
 set obj [get_dashboard_gadgets [ list "power_1" ] ]
 set_property -name "reports" -value "impl_1#impl_1_route_report_power_0" -objects $obj
 
 # Create 'timing_1' gadget (if not found)
 if {[string equal [get_dashboard_gadgets  [ list "timing_1" ] ] ""]} {
-create_dashboard_gadget -name {timing_1} -type timing
+  create_dashboard_gadget -name {timing_1} -type timing
 }
 set obj [get_dashboard_gadgets [ list "timing_1" ] ]
 set_property -name "reports" -value "impl_1#impl_1_route_report_timing_summary_0" -objects $obj
 
 # Create 'utilization_1' gadget (if not found)
 if {[string equal [get_dashboard_gadgets  [ list "utilization_1" ] ] ""]} {
-create_dashboard_gadget -name {utilization_1} -type utilization
+  create_dashboard_gadget -name {utilization_1} -type utilization
 }
 set obj [get_dashboard_gadgets [ list "utilization_1" ] ]
 set_property -name "reports" -value "synth_1#synth_1_synth_report_utilization_0" -objects $obj
@@ -782,7 +642,7 @@ set_property -name "run.type" -value "synthesis" -objects $obj
 
 # Create 'utilization_2' gadget (if not found)
 if {[string equal [get_dashboard_gadgets  [ list "utilization_2" ] ] ""]} {
-create_dashboard_gadget -name {utilization_2} -type utilization
+  create_dashboard_gadget -name {utilization_2} -type utilization
 }
 set obj [get_dashboard_gadgets [ list "utilization_2" ] ]
 set_property -name "reports" -value "impl_1#impl_1_place_report_utilization_0" -objects $obj

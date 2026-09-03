@@ -76,6 +76,9 @@ begin
         a_ext := signed("0" & A);
         b_ext := signed("0" & B);
 
+        res         := (others => '0');
+        add_sub_res := (others => '0');
+        other_res   := (others => '0');
         cf := '0';
         sf := '0';
         ovf := '0';

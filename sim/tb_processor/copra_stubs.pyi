@@ -111,8 +111,8 @@ class Main(cocotb.handle.HierarchyObject):
     ram_inst: RamInst
     ram_mux_out: cocotb.handle.LogicArrayObject
     ram_out: cocotb.handle.LogicArrayObject
+    ramread: cocotb.handle.LogicObject
     ramw: cocotb.handle.LogicObject
-    ramw_neg: cocotb.handle.LogicObject
     ramwe: cocotb.handle.LogicObject
     reg_0_internal: cocotb.handle.LogicArrayObject
     register_address: cocotb.handle.LogicObject
@@ -405,7 +405,7 @@ class Main(cocotb.handle.HierarchyObject):
     def __getitem__(self, name: Literal['ram_data']) -> cocotb.handle.LogicArrayObject: ...
 
     @overload
-    def __getitem__(self, name: Literal['ramw_neg']) -> cocotb.handle.LogicObject: ...
+    def __getitem__(self, name: Literal['ramread']) -> cocotb.handle.LogicObject: ...
 
     @overload
     def __getitem__(self, name: Literal['ram_out']) -> cocotb.handle.LogicArrayObject: ...

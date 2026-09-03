@@ -1,6 +1,7 @@
 # VHDL implementation of custom ISA processor
 
-Custom 16-bit RISC processor inspired by RISC-V, MIPS and 8086 ideas with simple hardware interrupt system and GPIO registers implemented in VHDL, deployed and demonstrated on Basys 3 board.
+Custom 16-bit RISC processor inspired by RISC-V and MIPS fitted with simple hardware interrupt system, Memory mapped GPIO registers implemented in VHDL.
+The processor's basic features are verified in cocotb simulation and the Processor and GPIO is deployed and demonstrated on Basys 3 board.
 
 ## Technical details
 
@@ -15,10 +16,14 @@ Custom 16-bit RISC processor inspired by RISC-V, MIPS and 8086 ideas with simple
   - Interrupt PC holder, enables 1 layered interrupts
   - Interrupt system can be enabled and disabled in code
   - Implementation for both external (e.g. emergency button) interrupt and timer interrupt
-
+4. Segmented memory
+    - Two 2-bit segment registers DS and CS to mitigate the limits of 16-bit addresses achieving an 18 bit address space
+    - Currently only ROMs may be used as CS
   
 For detailed information about the ISA see the ```docs``` folder.
-  
+
+![Simple schematic](images/simple_schematic.png)
+    
 ## Building
 
 To build the Vivado project use the command
@@ -42,9 +47,38 @@ Then open the project .xpr file in the directory alpha_processor created by Viva
 ![GPIO demo](images/demo.gif)
 
 
+## RTL verification
+
+The core has some simple assembly tests compiled.
+The cocotb testbench script takes each test binary loads it into the program ROM and checks whether the debug value '0x600D' ends up in R1.
+Its functionality of course can be extended.
+The current test programs include:
+0 - Basic test of the CPU being operational
+1 - 3 - Load, store, add (with register addressing)
+4 - Sub
+5 - Data segment register
+
+![Testbench results](images/testbench1.png)
+
+Make sure to have the following dependencies:
+- make
+- ghdl
+- python3 (with venv)
+
+On linux:
+
+```bash
+cd sim
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cd tb_processor
+make
+```
+
 ## Assembling programs
 
-The python asembler assembles instructions to both Logisim and VHDL rom format.
+The python assembler produces hex instructions in both Logisim and VHDL rom format.
 It has no external dependencies it can be simply used as follows:
 
 ```bash
@@ -53,9 +87,9 @@ python assembler.py <assembly_textfile> <starting_address>
 
 ## Logisim implementation
 
-The logisim-evolution implementation can be found in the logisim directory and can  be very helpful for educational, cycle-by-cycle execution tracing of a programs execution
+The logisim-evolution implementation can be found in the ```logisim``` directory and can  be very helpful for educational, cycle-by-cycle execution tracing of a program's execution
 
-NOTE: The logisim implementation is not in full correspondance with the rtl
+NOTE: Over time the VHDL implementation's features superseded the logisim version. 
 
 ![Image of logisim implementation](images/logisim-image.png)
-![Simple schamtic](images/simple_schematic.png)
+

@@ -23,7 +23,7 @@ architecture Behavioral of mux8to1 is
 
 
 begin
-    process(in0, in1, sel)
+    process(in0, in1, in2, in3, in4, in5, in6, in7, sel)
     begin
         case sel is
             when "000" => mux_out <= in0;

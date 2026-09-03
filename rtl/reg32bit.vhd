@@ -27,8 +27,6 @@ begin
         elsif rising_edge(clk) then
             if write_enable = '1' then
                 internal_memory <= input;
-            else
-                internal_memory <= internal_memory;
              end if;
         end if;
         
