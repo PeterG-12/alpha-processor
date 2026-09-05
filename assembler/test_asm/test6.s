@@ -1,0 +1,16 @@
+NOOP
+LDI R2 0x16
+LDI R3 4
+DIV R2 R3 R1
+LDI R4 2
+JNE R1 R4 incorrect
+LDI R4 5
+JNE R2 R4 incorrect
+correct:
+LDI R1 0x600d
+LDI R7 end
+JUMP R7
+incorrect:
+LDI R1 0x1234
+end:
+NOOP

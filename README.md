@@ -53,10 +53,11 @@ The core has some simple assembly tests compiled.
 The cocotb testbench script takes each test binary loads it into the program ROM and checks whether the debug value '0x600D' ends up in R1.
 Its functionality of course can be extended.
 The current test programs include:
-0 - Basic test of the CPU being operational
-1 - 3 - Load, store, add (with register addressing)
-4 - Sub
-5 - Data segment register
+- 0 - Basic test of the CPU being operational
+- 1 - 3 - Load, store, add (with register addressing)
+- 4 - Sub
+- 5 - Data segment register
+- 6 - Division and jumps
 
 ![Testbench results](images/testbench1.png)
 
@@ -75,6 +76,23 @@ pip install -r requirements.txt
 cd tb_processor
 make
 ```
+
+## Synthesis and Implementation information
+| Resource | Utilization |
+| --- | --- |
+| **Slice LUTs** | 1352 |
+| **LUT as Memory** | 8 |
+| **LUT as Logic** | 1344 |
+| **Slice Registers** | 919 |
+| **Slices** | 560 |
+| **F7 Muxes** | 128 |
+| **Block RAM (BRAM) Tile** | 32 |
+
+The design meets timing constraints for 100MHz
+Setup WNS: 0.015 ns (Met)
+Hold WHS: 0.078 ns (Met)
+Pulse Width WPWS: 4.0 ns (Met)
+
 
 ## Assembling programs
 

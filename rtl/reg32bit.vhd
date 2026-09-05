@@ -21,13 +21,12 @@ begin
     process(clk, reset)
     
     begin
-    
-        if reset = '1' then
-            internal_memory <= (others => '0');
-        elsif rising_edge(clk) then
-            if write_enable = '1' then
+        if rising_edge(clk) then
+            if reset = '1' then
+                internal_memory <= (others => '0');
+            elsif write_enable = '1' then
                 internal_memory <= input;
-             end if;
+            end if;
         end if;
         
     end process;

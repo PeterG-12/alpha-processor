@@ -30,9 +30,6 @@ architecture Behavioral of main is
     
     signal in1 : std_logic_vector(15 downto 0);
 
-    -- Internal clock
-    signal clk : std_logic;
-
     signal reg_0_internal : std_logic_vector(15 downto 0) := (others => '0');
 
     signal opcode : std_logic_vector(5 downto 0) := (others => '0');
@@ -212,12 +209,12 @@ architecture Behavioral of main is
 begin
 
     -- Syncronising to prevent metastability
-    process(clk, reset)
+    process(clk_extrn, reset)
     begin
         if reset = '1' then
             interrupt_sync1 <= '0';
             interrupt_sync2 <= '0';
-        elsif rising_edge(clk) then
+        elsif rising_edge(clk_extrn) then
             interrupt_sync1 <= not interrupt;
             interrupt_sync2 <= interrupt_sync1;
         end if;
@@ -230,7 +227,7 @@ begin
         FREQ => 100_000_000
     )
     port map(
-        clk_in => clk,
+        clk_in => clk_extrn,
         reset => reset,
         pulse_out => timer_pulse
     );
@@ -245,8 +242,6 @@ begin
         seg => seg
     );
 
-    clk <= clk_extrn;
-
     segment_in <= alureg_low(1 downto 0);
 
     -- Data segment register
@@ -257,7 +252,7 @@ begin
     port map(
         input => segment_in,
         write_enable => dswe,
-        clk => clk,
+        clk => clk_extrn,
         reset => reset,
         output => ds_out
     );
@@ -270,7 +265,7 @@ begin
     port map(
         input => segment_in,
         write_enable => cswe,
-        clk => clk,
+        clk => clk_extrn,
         reset => reset,
         output => cs_out
     );
@@ -296,7 +291,7 @@ begin
      port map(
         input => pcsel_in,
         write_enable => pcwe,
-        clk => clk,
+        clk => clk_extrn,
         reset => reset,
         output => pc_out
     );
@@ -330,7 +325,7 @@ begin
      port map(
         interrupt => interrupt_buffer_out,
         opcode => opcode,
-        clk => clk,
+        clk => clk_extrn,
         reset => reset,
         sign_f => sign_f,
         overflow_f => overflow_f,
@@ -369,7 +364,7 @@ begin
      port map(
         input => input_peripheral_mux_ir,
         write_enable => drwe,
-        clk => clk,
+        clk => clk_extrn,
         reset => reset,
         output => dr_out
     );
@@ -410,7 +405,7 @@ begin
      port map(
         input => alu_out,
         write_enable => aluwe,
-        clk => clk,
+        clk => clk_extrn,
         reset => reset,
         output => alureg_out
     );
@@ -427,7 +422,7 @@ begin
      port map(
         input => ar_in,
         write_enable => arwe,
-        clk => clk,
+        clk => clk_extrn,
         reset => reset,
         output => ar_out
     );
@@ -460,7 +455,7 @@ begin
      port map(
         input => ram_mux_out,
         write_enable => irwe,
-        clk => clk,
+        clk => clk_extrn,
         reset => reset,
         output => ir_out
     );
@@ -492,7 +487,7 @@ begin
         BIT_WIDTH_IN => 16
     )
      port map(
-        clk => clk,
+        clk => clk_extrn,
         reset => reset,
         alu_mode => alum,
         A => x_alu_a,
@@ -560,7 +555,7 @@ begin
      port map(
         input => xy_in,
         write_enable => xywe,
-        clk => clk,
+        clk => clk_extrn,
         reset => reset,
         output => xy_out
     );
@@ -619,7 +614,7 @@ begin
         address_y => radry,
         dest_address => dest,
         write_enable => rwe,
-        clk => clk,
+        clk => clk_extrn,
         reset => reset,
         input_w => write_mux_out,
         output_x => holder_x,
@@ -668,7 +663,7 @@ begin
     )
      port map(
         address => mem_addr,
-        clk => clk,
+        clk => clk_extrn,
         write_enable => ramwe,
         output_enable => ramread,
         data_input => ram_data,
@@ -731,7 +726,7 @@ ramread <= '1' when adrsel /= "00" else '0';
         ADDRESS_SIZE => 5
     )
      port map(
-        clk => clk,
+        clk => clk_extrn,
         reset => reset,
         ramwe => ramw,
         mmap_consider => mmap_consider,
@@ -749,7 +744,7 @@ ramread <= '1' when adrsel /= "00" else '0';
     interrupt_controller_inst : entity work.interrupt_controller
     port map(
         reset => reset,
-        clk => clk,
+        clk => clk_extrn,
         pciwe => pciwe, -- This signal indicates that the current top priority interrupt has been processed by the CPU
         timer_int => timer_pulse,
         peripheral_int => peripheral_interrupt0,
@@ -767,7 +762,7 @@ ramread <= '1' when adrsel /= "00" else '0';
      port map(
         input => pc_out,
         write_enable => pciwe,
-        clk => clk,
+        clk => clk_extrn,
         reset => reset,
         output => pciout
     );
@@ -788,7 +783,7 @@ ramread <= '1' when adrsel /= "00" else '0';
         PORTS => 8
     )
      port map(
-        clk => clk,
+        clk => clk_extrn,
         reset => reset,
         gpio_ports => JB,
         gpio_output_mode => gpio_driver_signal_mode,
@@ -807,7 +802,7 @@ ramread <= '1' when adrsel /= "00" else '0';
         CLK_IDLE => '0'
     )
      port map(
-        clk => clk,
+        clk => clk_extrn,
         reset => reset,
         start_transfer => start_transfer,
         register_address => register_address,

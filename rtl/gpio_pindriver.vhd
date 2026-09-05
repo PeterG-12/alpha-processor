@@ -19,15 +19,17 @@ begin
 
     process(clk, reset)
     begin
-        if reset ='1' then
-            sync_1 <= '0';
-            sync_2 <= '0';
-            gpio_read_data <= '0';
-        elsif rising_edge(clk) then
-            sync_1 <= gpio_interface;
-            sync_2 <= sync_1;
-            gpio_read_data <= sync_2;
-
+        
+        if rising_edge(clk) then
+            if reset ='1' then
+                sync_1 <= '0';
+                sync_2 <= '0';
+                gpio_read_data <= '0';
+            else
+                sync_1 <= gpio_interface;
+                sync_2 <= sync_1;
+                gpio_read_data <= sync_2;
+            end if;
             
         end if;
     end process;

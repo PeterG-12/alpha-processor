@@ -22,18 +22,21 @@ architecture Behavioral of Switchtossd is
 begin
         process(clk, reset)
         begin
-            if reset = '1' then
-                mux_counter <= 0;
-                digit_select <= "00";
-            elsif clk'event and clk = '1' then
-                if mux_counter = CLK_CYCLES_PER_DIGIT - 1 then
-                mux_counter <= 0;
-                digit_select <= std_logic_vector(unsigned (digit_select) + 1);
+            
+            if rising_edge(clk) then
+                if reset = '1' then
+                    mux_counter <= 0;
+                    digit_select <= "00";
                 else
-                mux_counter <= mux_counter + 1;
+                    if mux_counter = CLK_CYCLES_PER_DIGIT - 1 then
+                        mux_counter <= 0;
+                        digit_select <= std_logic_vector(unsigned (digit_select) + 1);
+                    else
+                        mux_counter <= mux_counter + 1;
+                    end if;
+                    end if;
                 end if;
-            end if;
-            end process;
+        end process;
             process(inputvec, digit_select)
             begin
                 case digit_select is

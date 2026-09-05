@@ -22,12 +22,14 @@ begin
 -- Helpers
 process(clk, reset)
 begin
-    if reset = '1' then
-        ireset_delayed <= '0';
-        current_state <= Unset;
-    elsif rising_edge(clk) then
-        ireset_delayed <= ireset;
-        current_state <= next_state;
+    if rising_edge(clk) then
+        if reset = '1' then
+            ireset_delayed <= '0';
+            current_state <= Unset;
+        else
+            ireset_delayed <= ireset;
+            current_state <= next_state;
+        end if;
     end if;
 end process;
 

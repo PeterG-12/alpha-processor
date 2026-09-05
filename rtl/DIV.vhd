@@ -23,10 +23,10 @@ begin
     -- Counter
    process (reset, clk)
     begin
-        if reset = '1' then
-            internal_count <= 0;
-        elsif rising_edge(clk) then
-            if dividing = '1' and dividing_delay = '0' then
+        if rising_edge(clk) then
+            if reset = '1' then
+                internal_count <= 0;
+            elsif dividing = '1' and dividing_delay = '0' then
                 internal_count <= BIT_WIDTH; 
             elsif internal_count > 0 then
                 internal_count <= internal_count - 1;
