@@ -89,9 +89,9 @@ make
 | **Block RAM (BRAM) Tile** | 32 |
 
 The design meets timing constraints for 100MHz
-Setup WNS: 0.015 ns (Met)
-Hold WHS: 0.078 ns (Met)
-Pulse Width WPWS: 4.0 ns (Met)
+- Setup WNS: 0.015 ns (Met)
+- Hold WHS: 0.078 ns (Met)
+- Pulse Width WPWS: 4.0 ns (Met)
 
 
 ## Assembling programs
