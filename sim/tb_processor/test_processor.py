@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import string
 import cocotb
 from cocotb.handle import ArrayObject
