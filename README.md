@@ -3,6 +3,7 @@
 Custom 16-bit RISC processor fitted with simple hardware interrupt system, Memory mapped GPIO registers implemented in VHDL.
 The processor's basic features are verified in cocotb simulation and the Processor and GPIO is deployed and demonstrated on Basys 3 board.
 
+> [!NOTE]
 > **Note on Origin:** This is an independent, extracurricular project developed from first principles prior to taking university Computer Architecture coursework.
 
 ## Technical details
@@ -39,6 +40,8 @@ The current test programs include:
 - 4 - Sub
 - 5 - Data segment register
 - 6 - Division and jumps
+
+[![Cocotb Program Tests](https://github.com/PeterG-12/alpha-processor/actions/workflows/github_cocotb_tests.yml/badge.svg)](https://github.com/PeterG-12/alpha-processor/actions/workflows/github_cocotb_tests.yml)
 
 Make sure to have the following dependencies:
 - make
